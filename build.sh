@@ -17,4 +17,4 @@ make -j4 KERNELRELEASE=$(uname -r) kernver=$(uname -r)
 rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 
 #Install modules (requires root)
-sudo make install
+sudo make install KERNELRELEASE=$(uname -r)
