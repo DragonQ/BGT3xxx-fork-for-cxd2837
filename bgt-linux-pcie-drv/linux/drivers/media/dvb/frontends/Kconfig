@@ -120,6 +120,12 @@ config DVB_CXD2861
 	help
 	  Say Y when you want to support this tuner
 
+config DVB_CXD2843
+        tristate "Sony CXD2843"
+        depends on DVB_CORE && I2C
+        default m if DVB_FE_CUSTOMISE
+        help
+          Say Y when you want to support this tuner
 endmenu
 
 endif
