@@ -34,6 +34,7 @@
 #include <linux/mutex.h>
 #include <asm/div64.h>
 
+#include <linux/dvb/frontend.h>
 #include "dvb_frontend.h"
 #include "cxd2843.h"
 
