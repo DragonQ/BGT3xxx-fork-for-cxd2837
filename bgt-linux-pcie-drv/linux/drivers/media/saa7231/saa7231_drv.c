@@ -87,6 +87,8 @@
 #include "cxd2817.h"
 #include "cxd2861.h"
 
+#include "cxd2843.h"
+
 static unsigned int verbose;
 static unsigned int int_type;
 
