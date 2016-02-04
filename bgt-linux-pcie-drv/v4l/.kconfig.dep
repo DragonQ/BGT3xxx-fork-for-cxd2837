@@ -1,8 +1,0 @@
-Kconfig: ../linux/drivers/media/Kconfig \
-	../linux/drivers/media/common/Kconfig \
-	../linux/drivers/media/common/tuners/Kconfig \
-	../linux/drivers/media/video/Kconfig \
-	../linux/drivers/media/dvb/Kconfig \
-	../linux/drivers/media/dvb/frontends/Kconfig \
-	../linux/drivers/media/saa7231/Kconfig \
-	./Kconfig.sound
