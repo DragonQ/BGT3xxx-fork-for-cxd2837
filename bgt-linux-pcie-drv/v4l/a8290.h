@@ -1,1 +1,0 @@
-../linux/drivers/media/dvb/frontends/a8290.h
