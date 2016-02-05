@@ -1,0 +1,210 @@
+# Including linux/drivers/media/Makefile
+#
+# Makefile for the kernel multimedia device drivers.
+#
+
+# Including linux/drivers/media/common/Makefile
+ir-common-objs  := ir-functions.o ir-keymaps.o
+
+# Including linux/drivers/media/common/tuners/Makefile
+#
+# Makefile for common V4L/DVB tuners
+#
+
+tda18271-objs := tda18271-maps.o tda18271-common.o tda18271-fe.o
+
+#obj-$(CONFIG_MEDIA_TUNER_XC2028) += tuner-xc2028.o
+obj-$(CONFIG_MEDIA_TUNER_SIMPLE) += tuner-simple.o
+# tuner-types will be merged into tuner-simple, in the future
+obj-$(CONFIG_MEDIA_TUNER_SIMPLE) += tuner-types.o
+#obj-$(CONFIG_MEDIA_TUNER_MT20XX) += mt20xx.o
+#obj-$(CONFIG_MEDIA_TUNER_TDA8290) += tda8290.o
+#obj-$(CONFIG_MEDIA_TUNER_TEA5767) += tea5767.o
+#obj-$(CONFIG_MEDIA_TUNER_TEA5761) += tea5761.o
+#obj-$(CONFIG_MEDIA_TUNER_TDA9887) += tda9887.o
+#obj-$(CONFIG_MEDIA_TUNER_TDA827X) += tda827x.o
+obj-$(CONFIG_MEDIA_TUNER_TDA18271) += tda18271.o
+#obj-$(CONFIG_MEDIA_TUNER_XC5000) += xc5000.o
+#obj-$(CONFIG_MEDIA_TUNER_MT2060) += mt2060.o
+#obj-$(CONFIG_MEDIA_TUNER_MT2266) += mt2266.o
+#obj-$(CONFIG_MEDIA_TUNER_QT1010) += qt1010.o
+#obj-$(CONFIG_MEDIA_TUNER_MT2131) += mt2131.o
+#obj-$(CONFIG_MEDIA_TUNER_MXL5005S) += mxl5005s.o
+#obj-$(CONFIG_MEDIA_TUNER_MXL5007T) += mxl5007t.o
+#obj-$(CONFIG_MEDIA_TUNER_MC44S803) += mc44s803.o
+
+obj-$(CONFIG_VIDEO_IR) += ir-common.o
+# Including linux/drivers/media/video/Makefile
+#
+# Makefile for the V4L2 core
+#
+
+tuner-objs	:=	tuner-core.o
+
+videodev-objs	:=	v4l2-dev.o v4l2-ioctl.o v4l2-device.o v4l2-fh.o \
+			v4l2-event.o v4l2-ctrls.o v4l2-subdev.o v4l2-clk.o \
+			v4l2-async.o
+ifeq ($(CONFIG_COMPAT),y)
+  videodev-objs += v4l2-compat-ioctl32.o
+endif
+ifeq ($(CONFIG_OF),y)
+  videodev-objs += v4l2-of.o
+endif
+
+obj-$(CONFIG_VIDEO_V4L2) += videodev.o
+obj-$(CONFIG_VIDEO_V4L2) += v4l2-common.o
+obj-$(CONFIG_VIDEO_V4L2) += v4l2-dv-timings.o
+
+obj-$(CONFIG_VIDEO_TUNER) += tuner.o
+
+obj-$(CONFIG_V4L2_MEM2MEM_DEV) += v4l2-mem2mem.o
+
+obj-$(CONFIG_VIDEOBUF_GEN) += videobuf-core.o
+obj-$(CONFIG_VIDEOBUF_DMA_SG) += videobuf-dma-sg.o
+obj-$(CONFIG_VIDEOBUF_DMA_CONTIG) += videobuf-dma-contig.o
+obj-$(CONFIG_VIDEOBUF_VMALLOC) += videobuf-vmalloc.o
+obj-$(CONFIG_VIDEOBUF_DVB) += videobuf-dvb.o
+
+obj-$(CONFIG_VIDEOBUF2_CORE) += videobuf2-core.o
+obj-$(CONFIG_VIDEOBUF2_MEMOPS) += videobuf2-memops.o
+obj-$(CONFIG_VIDEOBUF2_VMALLOC) += videobuf2-vmalloc.o
+obj-$(CONFIG_VIDEOBUF2_DMA_CONTIG) += videobuf2-dma-contig.o
+obj-$(CONFIG_VIDEOBUF2_DMA_SG) += videobuf2-dma-sg.o
+obj-$(CONFIG_VIDEOBUF2_DVB) += videobuf2-dvb.o
+
+ccflags-y += -I$(srctree)/drivers/media/dvb-core
+ccflags-y += -I$(srctree)/drivers/media/dvb-frontends
+ccflags-y += -I$(srctree)/drivers/media/tuners
+
+
+# Including linux/drivers/media/dvb/Makefile
+#
+# Makefile for the kernel multimedia device drivers.
+#
+
+# Including linux/drivers/media/dvb/dvb-core/Makefile
+#
+# Makefile for the kernel DVB device drivers.
+#
+
+dvb-net-$(CONFIG_DVB_NET) := dvb_net.o
+
+dvb-core-objs := dvbdev.o dmxdev.o dvb_demux.o dvb_filter.o 	\
+		 dvb_ca_en50221.o dvb_frontend.o 		\
+		 $(dvb-net-y) dvb_ringbuffer.o dvb_math.o
+
+obj-$(CONFIG_DVB_CORE) += dvb-core.o
+# Including linux/drivers/media/dvb/frontends/Makefile
+#
+# Makefile for the kernel DVB frontend device drivers.
+#
+
+
+cxd2820r-objs = cxd2820r_core.o cxd2820r_c.o cxd2820r_t.o cxd2820r_t2.o
+
+obj-$(CONFIG_DVB_PLL) += dvb-pll.o
+obj-$(CONFIG_DVB_TDA18272) += tda18272.o
+obj-$(CONFIG_DVB_TDA10048) += tda10048.o
+obj-$(CONFIG_DVB_S5H1411) += s5h1411.o
+obj-$(CONFIG_DVB_DUMMY_FE) += dvb_dummy_fe.o
+obj-$(CONFIG_DVB_STV090x) += stv090x.o
+obj-$(CONFIG_DVB_STV6110x) += stv6110x.o
+obj-$(CONFIG_DVB_LNBP21) += lnbp21.o
+obj-$(CONFIG_DVB_CXD2820R) += cxd2820r.o
+# obj-$(CONFIG_DVB_CXD2834) += cxd2834.o
+obj-$(CONFIG_DVB_CXD2850) += cxd2850.o
+obj-$(CONFIG_DVB_A8290) += a8290.o
+obj-$(CONFIG_DVB_CXD2817) += cxd2817.o
+obj-$(CONFIG_DVB_CXD2861) += cxd2861.o
+obj-$(CONFIG_DVB_CXD2843) += cxd2843.o
+# Including linux/drivers/media/saa7231/Makefile
+saa7231_core-objs		:= saa7231_pci.o	\
+				   saa7231_cgu.o	\
+				   saa7231_i2c.o	\
+				   saa7231_if.o		\
+				   saa7231_msi.o	\
+				   saa7231_dmabuf.o	\
+				   saa7231_gpio.o	\
+				   saa7231_ring.o	\
+				   saa7231_ts2dtl.o	\
+				   saa7231_stream.o	\
+				   saa7231_dvb.o
+#				   saa7231_dvbs.o
+#				   saa7231_dvbt.o
+#				   saa7231_vs2dtl.o
+#				   saa7231_xs2dtl.o
+#				   saa7231_dif.o
+#				   saa7231_avis_vid.o
+#				   saa7231_avis_aud.o
+#				   saa7231_vidops.o
+#				   saa7231_audops.o
+#				   saa7231_tsoif.o
+
+
+obj-$(CONFIG_SAA7231_CORE)	+= saa7231_core.o
+obj-$(CONFIG_SAA7231_DRV)	+= saa7231_drv.o
+
+media-install::
+	@echo -e "\nRemoving obsolete files from $(KDIR26)/dvb/cinergyT2:"
+	@files='cinergyT2.ko'; for i in $$files;do if [ -e $(DESTDIR)$(KDIR26)/dvb/cinergyT2/$$i ]; then echo -n "$$i "; rm $(DESTDIR)$(KDIR26)/dvb/cinergyT2/$$i; fi; done; for i in $$files;do if [ -e $(DESTDIR)$(KDIR26)/dvb/cinergyT2/$$i.gz ]; then echo -n "$$i.gz "; rm $(DESTDIR)$(KDIR26)/dvb/cinergyT2/$$i.gz; fi; done; echo;
+
+	@echo -e "\nRemoving obsolete files from $(KDIR26)/dvb/frontends:"
+	@files='mt2060.ko qt1010.ko mt2266.ko tda827x.ko mt2131.ko tda18271.ko xc5000.ko'; for i in $$files;do if [ -e $(DESTDIR)$(KDIR26)/dvb/frontends/$$i ]; then echo -n "$$i "; rm $(DESTDIR)$(KDIR26)/dvb/frontends/$$i; fi; done; for i in $$files;do if [ -e $(DESTDIR)$(KDIR26)/dvb/frontends/$$i.gz ]; then echo -n "$$i.gz "; rm $(DESTDIR)$(KDIR26)/dvb/frontends/$$i.gz; fi; done; echo;
+
+	@echo -e "\nRemoving obsolete files from $(KDIR26)/video:"
+	@files='tuner-types.ko tea5761.ko video-buf.ko tda8290.ko compat-ioctl32.ko tea5767.ko tuner-xc2028.ko tuner-simple.ko video-buf-dvb.ko mt20xx.ko tda9887.ko'; for i in $$files;do if [ -e $(DESTDIR)$(KDIR26)/video/$$i ]; then echo -n "$$i "; rm $(DESTDIR)$(KDIR26)/video/$$i; fi; done; for i in $$files;do if [ -e $(DESTDIR)$(KDIR26)/video/$$i.gz ]; then echo -n "$$i.gz "; rm $(DESTDIR)$(KDIR26)/video/$$i.gz; fi; done; echo;
+
+	@if [ -d /lib/modules/$(KERNELRELEASE)/ubuntu/media ]; then printf "\nHmm... distro kernel with a non-standard place for module backports detected.\nPlease always prefer to use vanilla upstream kernel with V4L/DVB\nI'll try to remove old/obsolete LUM files from /lib/modules/$(KERNELRELEASE)/ubuntu/media:\n"; files=' tda18271.ko tuner-types.ko tuner-simple.ko ir-common.ko videodev.ko videobuf2-core.ko videobuf2-memops.ko videobuf-dma-contig.ko v4l2-common.ko videobuf-vmalloc.ko videobuf2-dvb.ko videobuf-core.ko videobuf2-dma-contig.ko videobuf-dma-sg.ko v4l2-mem2mem.ko videobuf-dvb.ko videobuf2-dma-sg.ko tuner.ko videobuf2-vmalloc.ko v4l2-dv-timings.ko dvb-core.ko tda10048.ko dvb_dummy_fe.ko cxd2843.ko dvb-pll.ko tda18272.ko cxd2861.ko cxd2820r.ko stv090x.ko cxd2817.ko a8290.ko cxd2850.ko s5h1411.ko lnbp21.ko stv6110x.ko saa7231_core.ko saa7231_drv.ko cinergyT2.ko mt2060.ko qt1010.ko mt2266.ko tda827x.ko mt2131.ko tda18271.ko xc5000.ko tuner-types.ko tea5761.ko video-buf.ko tda8290.ko compat-ioctl32.ko tea5767.ko tuner-xc2028.ko tuner-simple.ko video-buf-dvb.ko mt20xx.ko tda9887.ko'; for i in $$files;do find "/lib/modules/$(KERNELRELEASE)/ubuntu/media" -name "$$i" -exec echo '{}' ';' ; find "/lib/modules/$(KERNELRELEASE)/ubuntu/media" -name "$$i" -exec rm '{}' ';' ; done; fi
+	@echo "Installing kernel modules under $(DESTDIR)$(KDIR26)/:"
+	@n=0;for i in tda18271.ko tuner-types.ko tuner-simple.ko;do if [ -e "$$i" ]; then if [ $$n -eq 0 ]; then echo -n "	common/tuners/: "; install -d $(DESTDIR)$(KDIR26)/common/tuners; fi; n=$$(($$n+1)); if [  $$n -eq 4 ]; then echo; echo -n "		"; n=1; fi; echo -n "$$i "; install -m 644 -c $$i $(DESTDIR)$(KDIR26)/common/tuners; fi; done; if [  $$n -ne 0 ]; then echo; strip --strip-debug $(DESTDIR)$(KDIR26)/common/tuners/*.ko; fi;
+
+	@n=0;for i in ir-common.ko;do if [ -e "$$i" ]; then if [ $$n -eq 0 ]; then echo -n "	common/: "; install -d $(DESTDIR)$(KDIR26)/common; fi; n=$$(($$n+1)); if [  $$n -eq 4 ]; then echo; echo -n "		"; n=1; fi; echo -n "$$i "; install -m 644 -c $$i $(DESTDIR)$(KDIR26)/common; fi; done; if [  $$n -ne 0 ]; then echo; strip --strip-debug $(DESTDIR)$(KDIR26)/common/*.ko; fi;
+
+	@n=0;for i in videodev.ko videobuf2-core.ko videobuf2-memops.ko videobuf-dma-contig.ko v4l2-common.ko videobuf-vmalloc.ko videobuf2-dvb.ko videobuf-core.ko videobuf2-dma-contig.ko videobuf-dma-sg.ko v4l2-mem2mem.ko videobuf-dvb.ko videobuf2-dma-sg.ko tuner.ko videobuf2-vmalloc.ko v4l2-dv-timings.ko;do if [ -e "$$i" ]; then if [ $$n -eq 0 ]; then echo -n "	video/: "; install -d $(DESTDIR)$(KDIR26)/video; fi; n=$$(($$n+1)); if [  $$n -eq 4 ]; then echo; echo -n "		"; n=1; fi; echo -n "$$i "; install -m 644 -c $$i $(DESTDIR)$(KDIR26)/video; fi; done; if [  $$n -ne 0 ]; then echo; strip --strip-debug $(DESTDIR)$(KDIR26)/video/*.ko; fi;
+
+	@n=0;for i in dvb-core.ko;do if [ -e "$$i" ]; then if [ $$n -eq 0 ]; then echo -n "	dvb/dvb-core/: "; install -d $(DESTDIR)$(KDIR26)/dvb/dvb-core; fi; n=$$(($$n+1)); if [  $$n -eq 4 ]; then echo; echo -n "		"; n=1; fi; echo -n "$$i "; install -m 644 -c $$i $(DESTDIR)$(KDIR26)/dvb/dvb-core; fi; done; if [  $$n -ne 0 ]; then echo; strip --strip-debug $(DESTDIR)$(KDIR26)/dvb/dvb-core/*.ko; fi;
+
+	@n=0;for i in tda10048.ko dvb_dummy_fe.ko cxd2843.ko dvb-pll.ko tda18272.ko cxd2861.ko cxd2820r.ko stv090x.ko cxd2817.ko a8290.ko cxd2850.ko s5h1411.ko lnbp21.ko stv6110x.ko;do if [ -e "$$i" ]; then if [ $$n -eq 0 ]; then echo -n "	dvb/frontends/: "; install -d $(DESTDIR)$(KDIR26)/dvb/frontends; fi; n=$$(($$n+1)); if [  $$n -eq 4 ]; then echo; echo -n "		"; n=1; fi; echo -n "$$i "; install -m 644 -c $$i $(DESTDIR)$(KDIR26)/dvb/frontends; fi; done; if [  $$n -ne 0 ]; then echo; strip --strip-debug $(DESTDIR)$(KDIR26)/dvb/frontends/*.ko; fi;
+
+	@n=0;for i in saa7231_core.ko saa7231_drv.ko;do if [ -e "$$i" ]; then if [ $$n -eq 0 ]; then echo -n "	saa7231/: "; install -d $(DESTDIR)$(KDIR26)/saa7231; fi; n=$$(($$n+1)); if [  $$n -eq 4 ]; then echo; echo -n "		"; n=1; fi; echo -n "$$i "; install -m 644 -c $$i $(DESTDIR)$(KDIR26)/saa7231; fi; done; if [  $$n -ne 0 ]; then echo; strip --strip-debug $(DESTDIR)$(KDIR26)/saa7231/*.ko; fi;
+
+	
+	/sbin/depmod -a $(KERNELRELEASE) $(if $(DESTDIR),-b $(DESTDIR))
+
+media-rminstall::
+	@echo -e "\nRemoving obsolete files from $(KDIR26)/dvb/cinergyT2:"
+	@files='cinergyT2.ko'; for i in $$files;do if [ -e $(DESTDIR)$(KDIR26)/dvb/cinergyT2/$$i ]; then echo -n "$$i "; rm $(DESTDIR)$(KDIR26)/dvb/cinergyT2/$$i; fi; done; for i in $$files;do if [ -e $(DESTDIR)$(KDIR26)/dvb/cinergyT2/$$i.gz ]; then echo -n "$$i.gz "; rm $(DESTDIR)$(KDIR26)/dvb/cinergyT2/$$i.gz; fi; done; echo;
+
+	@echo -e "\nRemoving obsolete files from $(KDIR26)/dvb/frontends:"
+	@files='mt2060.ko qt1010.ko mt2266.ko tda827x.ko mt2131.ko tda18271.ko xc5000.ko'; for i in $$files;do if [ -e $(DESTDIR)$(KDIR26)/dvb/frontends/$$i ]; then echo -n "$$i "; rm $(DESTDIR)$(KDIR26)/dvb/frontends/$$i; fi; done; for i in $$files;do if [ -e $(DESTDIR)$(KDIR26)/dvb/frontends/$$i.gz ]; then echo -n "$$i.gz "; rm $(DESTDIR)$(KDIR26)/dvb/frontends/$$i.gz; fi; done; echo;
+
+	@echo -e "\nRemoving obsolete files from $(KDIR26)/video:"
+	@files='tuner-types.ko tea5761.ko video-buf.ko tda8290.ko compat-ioctl32.ko tea5767.ko tuner-xc2028.ko tuner-simple.ko video-buf-dvb.ko mt20xx.ko tda9887.ko'; for i in $$files;do if [ -e $(DESTDIR)$(KDIR26)/video/$$i ]; then echo -n "$$i "; rm $(DESTDIR)$(KDIR26)/video/$$i; fi; done; for i in $$files;do if [ -e $(DESTDIR)$(KDIR26)/video/$$i.gz ]; then echo -n "$$i.gz "; rm $(DESTDIR)$(KDIR26)/video/$$i.gz; fi; done; echo;
+
+	@if [ -d /lib/modules/$(KERNELRELEASE)/ubuntu/media ]; then printf "\nHmm... distro kernel with a non-standard place for module backports detected.\nPlease always prefer to use vanilla upstream kernel with V4L/DVB\nI'll try to remove old/obsolete LUM files from /lib/modules/$(KERNELRELEASE)/ubuntu/media:\n"; files=' tda18271.ko tuner-types.ko tuner-simple.ko ir-common.ko videodev.ko videobuf2-core.ko videobuf2-memops.ko videobuf-dma-contig.ko v4l2-common.ko videobuf-vmalloc.ko videobuf2-dvb.ko videobuf-core.ko videobuf2-dma-contig.ko videobuf-dma-sg.ko v4l2-mem2mem.ko videobuf-dvb.ko videobuf2-dma-sg.ko tuner.ko videobuf2-vmalloc.ko v4l2-dv-timings.ko dvb-core.ko tda10048.ko dvb_dummy_fe.ko cxd2843.ko dvb-pll.ko tda18272.ko cxd2861.ko cxd2820r.ko stv090x.ko cxd2817.ko a8290.ko cxd2850.ko s5h1411.ko lnbp21.ko stv6110x.ko saa7231_core.ko saa7231_drv.ko cinergyT2.ko mt2060.ko qt1010.ko mt2266.ko tda827x.ko mt2131.ko tda18271.ko xc5000.ko tuner-types.ko tea5761.ko video-buf.ko tda8290.ko compat-ioctl32.ko tea5767.ko tuner-xc2028.ko tuner-simple.ko video-buf-dvb.ko mt20xx.ko tda9887.ko'; for i in $$files;do find "/lib/modules/$(KERNELRELEASE)/ubuntu/media" -name "$$i" -exec echo '{}' ';' ; find "/lib/modules/$(KERNELRELEASE)/ubuntu/media" -name "$$i" -exec rm '{}' ';' ; done; fi
+	@echo -e "\nRemoving old $(KDIR26)/common/tuners files:"
+	@files='tda18271.ko tuner-types.ko tuner-simple.ko'; for i in $$files;do if [ -e $(DESTDIR)$(KDIR26)/common/tuners/$$i ]; then echo -n "$$i "; rm $(DESTDIR)$(KDIR26)/common/tuners/$$i; fi; done; for i in $$files;do if [ -e $(DESTDIR)$(KDIR26)/common/tuners/$$i.gz ]; then echo -n "$$i.gz "; rm $(DESTDIR)$(KDIR26)/common/tuners/$$i.gz; fi; done; echo;
+
+	@echo -e "\nRemoving old $(KDIR26)/common files:"
+	@files='ir-common.ko'; for i in $$files;do if [ -e $(DESTDIR)$(KDIR26)/common/$$i ]; then echo -n "$$i "; rm $(DESTDIR)$(KDIR26)/common/$$i; fi; done; for i in $$files;do if [ -e $(DESTDIR)$(KDIR26)/common/$$i.gz ]; then echo -n "$$i.gz "; rm $(DESTDIR)$(KDIR26)/common/$$i.gz; fi; done; echo;
+
+	@echo -e "\nRemoving old $(KDIR26)/video files:"
+	@files='videodev.ko videobuf2-core.ko videobuf2-memops.ko videobuf-dma-contig.ko v4l2-common.ko videobuf-vmalloc.ko videobuf2-dvb.ko videobuf-core.ko videobuf2-dma-contig.ko videobuf-dma-sg.ko v4l2-mem2mem.ko videobuf-dvb.ko videobuf2-dma-sg.ko tuner.ko videobuf2-vmalloc.ko v4l2-dv-timings.ko'; for i in $$files;do if [ -e $(DESTDIR)$(KDIR26)/video/$$i ]; then echo -n "$$i "; rm $(DESTDIR)$(KDIR26)/video/$$i; fi; done; for i in $$files;do if [ -e $(DESTDIR)$(KDIR26)/video/$$i.gz ]; then echo -n "$$i.gz "; rm $(DESTDIR)$(KDIR26)/video/$$i.gz; fi; done; echo;
+
+	@echo -e "\nRemoving old $(KDIR26)/dvb/dvb-core files:"
+	@files='dvb-core.ko'; for i in $$files;do if [ -e $(DESTDIR)$(KDIR26)/dvb/dvb-core/$$i ]; then echo -n "$$i "; rm $(DESTDIR)$(KDIR26)/dvb/dvb-core/$$i; fi; done; for i in $$files;do if [ -e $(DESTDIR)$(KDIR26)/dvb/dvb-core/$$i.gz ]; then echo -n "$$i.gz "; rm $(DESTDIR)$(KDIR26)/dvb/dvb-core/$$i.gz; fi; done; echo;
+
+	@echo -e "\nRemoving old $(KDIR26)/dvb/frontends files:"
+	@files='tda10048.ko dvb_dummy_fe.ko cxd2843.ko dvb-pll.ko tda18272.ko cxd2861.ko cxd2820r.ko stv090x.ko cxd2817.ko a8290.ko cxd2850.ko s5h1411.ko lnbp21.ko stv6110x.ko'; for i in $$files;do if [ -e $(DESTDIR)$(KDIR26)/dvb/frontends/$$i ]; then echo -n "$$i "; rm $(DESTDIR)$(KDIR26)/dvb/frontends/$$i; fi; done; for i in $$files;do if [ -e $(DESTDIR)$(KDIR26)/dvb/frontends/$$i.gz ]; then echo -n "$$i.gz "; rm $(DESTDIR)$(KDIR26)/dvb/frontends/$$i.gz; fi; done; echo;
+
+	@echo -e "\nRemoving old $(KDIR26)/saa7231 files:"
+	@files='saa7231_core.ko saa7231_drv.ko'; for i in $$files;do if [ -e $(DESTDIR)$(KDIR26)/saa7231/$$i ]; then echo -n "$$i "; rm $(DESTDIR)$(KDIR26)/saa7231/$$i; fi; done; for i in $$files;do if [ -e $(DESTDIR)$(KDIR26)/saa7231/$$i.gz ]; then echo -n "$$i.gz "; rm $(DESTDIR)$(KDIR26)/saa7231/$$i.gz; fi; done; echo;
+
+Makefile.media: ../linux/drivers/media/Makefile \
+	obsolete.txt \
+	../linux/drivers/media/common/tuners/Makefile \
+	../linux/drivers/media/common/Makefile \
+	../linux/drivers/media/video/Makefile \
+	../linux/drivers/media/dvb/dvb-core/Makefile \
+	../linux/drivers/media/dvb/frontends/Makefile \
+	../linux/drivers/media/saa7231/Makefile
