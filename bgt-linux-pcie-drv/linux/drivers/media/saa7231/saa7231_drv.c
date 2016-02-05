@@ -1058,9 +1058,8 @@ static int saa7231_frontend_attach(struct saa7231_dvb *dvb, int frontend)
 		break;
         case SUBSYS_INFO(BLACKGOLD_TECHNOLOGY, BLACKGOLD_BGT3602):
                 dvb->fe = dvb_attach(cxd2843_attach,
-                                     &bgt3620_cxd2843_cfg,
-                                     &saa7231->i2c[1 + frontend].i2c_adapter,
-                                     NULL);
+                                     &bgt3602_cxd2843_cfg,
+                                     &saa7231->i2c[1 + frontend].i2c_adapter);
 
                 if (!dvb->fe) {
                         dprintk(SAA7231_ERROR, 1, "Frontend:%d attach failed", f
