@@ -1,0 +1,1 @@
+diseqc: diseqc.c

@@ -506,6 +506,12 @@ static struct cxd2861_cfg bgt3636_cxd2861_config = {
 	.f_xtal		= 41,
 };
 
+static struct cxd2843_cfg bgt3602_cxd2843_cfg = {
+        .adr		 = (0xd8 >> 1),
+        .ts_clock 	= 0,
+	.parallel 	= 1,
+};
+
 #define NXP				"NXP Semiconductor"
 #define PURUS_PCIe_REF			0x0001
 #define PURUS_PCI_REF			0x0002
@@ -529,6 +535,7 @@ static struct cxd2861_cfg bgt3636_cxd2861_config = {
 #define BLACKGOLD_BGT3695		0x3695
 #define BLACKGOLD_BGT3696		0x3696
 #define BLACKGOLD_BGT3636		0x3636
+#define BLACKGOLD_BGT3602		0c3602
 
 #define SUBVENDOR_ALL			0x0000
 #define SUBDEVICE_ALL			0x0000
@@ -558,6 +565,7 @@ static struct cxd2861_cfg bgt3636_cxd2861_config = {
 #define BGT3695			       15
 #define BGT3696			       16
 #define BGT3636			       17
+#define BGT3602				18
 
 static struct card_desc saa7231_desc[] = {
 	MAKE_DESC(NXP,		"Purus PCIe",	"DVB-S + DVB-T + Analog Ref. design"),
@@ -579,6 +587,7 @@ static struct card_desc saa7231_desc[] = {
 	MAKE_DESC(BLACKGOLD,	"BGT3695",	"Dual DVB-T + Analog"),
 	MAKE_DESC(BLACKGOLD,	"BGT3696",	"Dual ATSC + Analog"),
 	MAKE_DESC(BLACKGOLD,	"BGT3636",	"DVB-S/S2 + DVB-T/T2/C + Analog"),
+	MAKE_DESC(BLACKGOLD,	"BGT3602",	"DVB-T/T2/C + Analog"),
 	{ }
 };
 
@@ -680,6 +689,11 @@ static int saa7231_frontend_enable(struct saa7231_dev *saa7231)
 		if (saa7231_gpio_reset(saa7231, GPIO_2, 50) < 0)
 			ret = -EIO;
 		break;
+        case SUBSYS_INFO(BLACKGOLD_TECHNOLOGY, BLACKGOLD_BGT3602):
+                GPIO_SET_OUT(GPIO_1);
+                if (saa7231_gpio_reset(saa7231, GPIO_1, 50) < 0)
+                        ret = -EIO;
+                break;
 	}
 	return ret;
 }
@@ -1042,6 +1056,25 @@ static int saa7231_frontend_attach(struct saa7231_dvb *dvb, int frontend)
 		}
 		ret = 0;
 		break;
+        case SUBSYS_INFO(BLACKGOLD_TECHNOLOGY, BLACKGOLD_BGT3602):
+                dvb->fe = dvb_attach(cxd2843_attach,
+                                     &bgt3620_cxd2843_cfg,
+                                     &saa7231->i2c[1 + frontend].i2c_adapter,
+                                     NULL);
+
+                if (!dvb->fe) {
+                        dprintk(SAA7231_ERROR, 1, "Frontend:%d attach failed", f
+rontend);
+                        ret = -ENODEV;
+                        goto exit;
+                } else {
+                        dvb_attach(tda18272_attach,
+                                   dvb->fe,
+                                   &saa7231->i2c[1 + frontend].i2c_adapter,
+                                   &bgt3620_tda18272_config[frontend]);
+                }
+                ret = 0;
+                break;
 	case SUBSYS_INFO(NXP_REFERENCE_BOARD, PURUS_PCIe_REF):
 		break;
 	case SUBSYS_INFO(NXP_REFERENCE_BOARD, PURUS_mPCIe_REF):
@@ -1296,6 +1329,24 @@ static struct saa7231_config purus_mpcie_ref_config = {
 	.frontend_attach	= saa7231_frontend_attach,
 	.stream_ports		= 1,
 };
+static struct saa7231_config purus_blackgold_bgt3602 = {
+        .desc                   = DEVICE_DESC(BGT3602),
+
+        .xtal                   = 54,
+        .i2c_rate               = SAA7231_I2C_RATE_100,
+        .root_clk               = CLK_ROOT_54MHz,
+        .irq_handler            = saa7231_irq_handler,
+
+        .ext_dvb_adapters       = 2,
+        .ts0_cfg                = 0x41,
+        .ts0_clk                = 0x05,
+        .ts1_cfg                = 0x41,
+        .ts1_clk                = 0x05,
+        .frontend_enable        = saa7231_frontend_enable,
+        .frontend_attach        = saa7231_frontend_attach,
+
+        .stream_ports           = 2,
+};
 
 static struct pci_device_id saa7231_pci_table[] = {
 
@@ -1310,6 +1361,7 @@ static struct pci_device_id saa7231_pci_table[] = {
 	MAKE_ENTRY(BLACKGOLD_TECHNOLOGY, BLACKGOLD_BGT3650, SAA7231, &purus_blackgold_bgt3650),
 	MAKE_ENTRY(BLACKGOLD_TECHNOLOGY, BLACKGOLD_BGT3651, SAA7231, &purus_blackgold_bgt3651),
 	MAKE_ENTRY(BLACKGOLD_TECHNOLOGY, BLACKGOLD_BGT3636, SAA7231, &purus_blackgold_bgt3636),
+	MAKE_ENTRY(BLACKGOLD_TECHNOLOGY, BLACKGOLD_BGT3602, SAA7231, &purus_blackgold_bgt3602),
 
 	MAKE_ENTRY(SUBVENDOR_ALL, SUBDEVICE_ALL, SAA7231, &purus_blackgold_bgt3576),
 	MAKE_ENTRY(SUBVENDOR_ALL, SUBDEVICE_ALL, SAA7231, &purus_blackgold_bgt3575),
