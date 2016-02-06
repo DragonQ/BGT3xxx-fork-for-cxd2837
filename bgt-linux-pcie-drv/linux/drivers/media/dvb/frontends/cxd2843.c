@@ -1853,7 +1853,7 @@ static int get_frontend(struct dvb_frontend *fe)
 }
 
 static struct dvb_frontend_ops common_ops_2843 = {
-	.delsys = {  SYS_DVBT, SYS_DVBT2, SYS_DVBC_ANNEX_A, },/* removed SYS_DVBC2 and change order */
+	.delsys = {  SYS_DVBT2, SYS_DVBT, SYS_DVBC_ANNEX_A, },/* removed SYS_DVBC2 and change order */
 	.info = {
 		.name = "CXD2843 DVB-C DVB-T/T2",
 		.frequency_stepsize = 166667,	/* DVB-T only */
@@ -1892,25 +1892,26 @@ static struct dvb_frontend_ops common_ops_2843 = {
 };
 
 static struct dvb_frontend_ops common_ops_2837 = {
-	.delsys = { SYS_DVBT, SYS_DVBT2, SYS_DVBC_ANNEX_A },
+	.delsys = { SYS_DVBT2, SYS_DVBT, SYS_DVBC_ANNEX_A },
 	.info = {
-		.name = "CXD2837 DVB-C DVB-T/T2",
+		.name = "CXD2837 DVB-T/T2 DVB-C",
 		.frequency_stepsize = 166667,	/* DVB-T only */
 		.frequency_min = 47000000,	/* DVB-T: 47125000 */
 		.frequency_max = 865000000,	/* DVB-C: 862000000 */
 		.symbol_rate_min = 870000,
 		.symbol_rate_max = 11700000,
-		.caps = /* DVB-C */
-			FE_CAN_QAM_16 | FE_CAN_QAM_32 | FE_CAN_QAM_64 |
-			FE_CAN_QAM_128 | FE_CAN_QAM_256 |
-			FE_CAN_FEC_AUTO |
-			/* DVB-T */
+		.caps = /* DVB-T */
 			FE_CAN_QAM_16 | FE_CAN_QAM_64 | FE_CAN_QAM_AUTO |
 			FE_CAN_FEC_1_2 | FE_CAN_FEC_2_3 | FE_CAN_FEC_3_4 |
 			FE_CAN_FEC_5_6 | FE_CAN_FEC_7_8 | FE_CAN_FEC_AUTO |
 			FE_CAN_TRANSMISSION_MODE_AUTO |
 			FE_CAN_GUARD_INTERVAL_AUTO | FE_CAN_HIERARCHY_AUTO |
-			FE_CAN_RECOVER | FE_CAN_MUTE_TS
+			FE_CAN_RECOVER | FE_CAN_MUTE_TS |
+			/* DVB-C */
+			FE_CAN_QAM_16 | FE_CAN_QAM_32 | FE_CAN_QAM_64 |
+			FE_CAN_QAM_128 | FE_CAN_QAM_256 |
+			FE_CAN_FEC_AUTO 
+			
 	},
 	.release = release,
 	.i2c_gate_ctrl = gate_ctrl,
