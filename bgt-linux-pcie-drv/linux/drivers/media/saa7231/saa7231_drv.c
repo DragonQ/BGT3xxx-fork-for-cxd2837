@@ -904,7 +904,8 @@ static int saa7231_frontend_attach(struct saa7231_dvb *dvb, int frontend)
 				     NULL);
 
 		if (!dvb->fe) {
-					dvb->fe = dvb_attach(cxd2843_attach,
+				dprintk(SAA7231_ERROR, 1, "Frontend:%d attach failed", frontend);
+				dvb->fe = dvb_attach(cxd2843_attach,
                             &bgt3602_cxd2843_cfg,
                             &saa7231->i2c[1 + frontend].i2c_adapter);
           		if(!dvb->) {
@@ -916,7 +917,7 @@ static int saa7231_frontend_attach(struct saa7231_dvb *dvb, int frontend)
 				dvb->fe,
 				&saa7231->i2c[1 + frontend].i2c_adapter,
 				&bgt3620_tda18272_config[frontend]);
-		} 
+		}} 
 		else {
 			dvb_attach(tda18272_attach,
 				   dvb->fe,
