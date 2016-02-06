@@ -1853,7 +1853,7 @@ static int get_frontend(struct dvb_frontend *fe)
 }
 
 static struct dvb_frontend_ops common_ops_2843 = {
-	.delsys = { SYS_DVBC_ANNEX_A, SYS_DVBT, SYS_DVBT2 },/* removed SYS_DVBC2 */
+	.delsys = {  SYS_DVBT, SYS_DVBT2, SYS_DVBC_ANNEX_A, },/* removed SYS_DVBC2 and change order */
 	.info = {
 		.name = "CXD2843 DVB-C DVB-T/T2",
 		.frequency_stepsize = 166667,	/* DVB-T only */
@@ -1892,7 +1892,7 @@ static struct dvb_frontend_ops common_ops_2843 = {
 };
 
 static struct dvb_frontend_ops common_ops_2837 = {
-	.delsys = { SYS_DVBC_ANNEX_A, SYS_DVBT, SYS_DVBT2 },
+	.delsys = { SYS_DVBT, SYS_DVBT2, SYS_DVBC_ANNEX_A },
 	.info = {
 		.name = "CXD2837 DVB-C DVB-T/T2",
 		.frequency_stepsize = 166667,	/* DVB-T only */
