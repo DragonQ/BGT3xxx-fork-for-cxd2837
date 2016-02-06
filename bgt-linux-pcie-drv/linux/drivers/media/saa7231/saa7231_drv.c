@@ -508,8 +508,8 @@ static struct cxd2861_cfg bgt3636_cxd2861_config = {
 
 static struct cxd2843_cfg bgt3602_cxd2843_cfg = {
         .adr		 = (0xd8 >> 1),
-        .ts_clock 	= 0,
-	.parallel 	= 1,
+        .ts_clock 	= 1,
+	.parallel 	= 0,
 };
 
 #define NXP				"NXP Semiconductor"
