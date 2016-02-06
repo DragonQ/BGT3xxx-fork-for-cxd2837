@@ -879,7 +879,7 @@ static int saa7231_frontend_attach(struct saa7231_dvb *dvb, int frontend)
 #endif
 		ret = 0;
 		break;
-	case SUBSYS_INFO(BLACKGOLD_TECHNOLOGY, BLACKGOLD_BGT3600):
+/*	case SUBSYS_INFO(BLACKGOLD_TECHNOLOGY, BLACKGOLD_BGT3600):
 		dvb->fe = dvb_attach(cxd2820r_attach,
 				     &bgt3620_cxd2820r_config,
 				     &saa7231->i2c[1 + frontend].i2c_adapter,
@@ -896,7 +896,36 @@ static int saa7231_frontend_attach(struct saa7231_dvb *dvb, int frontend)
 				   &bgt3620_tda18272_config[frontend]);
 		}
 		ret = 0;
+		break;   old detection  */
+	case SUBSYS_INFO(BLACKGOLD_TECHNOLOGY, BLACKGOLD_BGT3600):
+		dvb->fe = dvb_attach(cxd2820r_attach,
+				     &bgt3620_cxd2820r_config,
+				     &saa7231->i2c[1 + frontend].i2c_adapter,
+				     NULL);
+
+		if (!dvb->fe) {
+					dvb->fe = dvb_attach(cxd2843_attach,
+                            &bgt3602_cxd2843_cfg,
+                            &saa7231->i2c[1 + frontend].i2c_adapter);
+          		if(!dvb->) {
+				dprintk(SAA7231_ERROR, 1, "Frontend:%d attach failed", frontend);
+				ret = -ENODEV;
+				goto exit; }
+			else {
+				dvb_attach(tda18272_attach,
+				dvb->fe,
+				&saa7231->i2c[1 + frontend].i2c_adapter,
+				&bgt3620_tda18272_config[frontend]);
+		} 
+		else {
+			dvb_attach(tda18272_attach,
+				   dvb->fe,
+				   &saa7231->i2c[1 + frontend].i2c_adapter,
+				   &bgt3620_tda18272_config[frontend]);
+		}
+		ret = 0;
 		break;
+
 	case SUBSYS_INFO(BLACKGOLD_TECHNOLOGY, BLACKGOLD_BGT3595):
 		dvb->fe = dvb_attach(stv090x_attach,
 				     &bgt3595_stv090x_config,
