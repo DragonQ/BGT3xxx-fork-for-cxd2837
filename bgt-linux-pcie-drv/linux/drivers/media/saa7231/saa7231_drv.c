@@ -1062,8 +1062,7 @@ static int saa7231_frontend_attach(struct saa7231_dvb *dvb, int frontend)
                                      &saa7231->i2c[1 + frontend].i2c_adapter);
 
                 if (!dvb->fe) {
-                        dprintk(SAA7231_ERROR, 1, "Frontend:%d attach failed", f
-rontend);
+                        dprintk(SAA7231_ERROR, 1, "Frontend:%d attach failed", frontend);
                         ret = -ENODEV;
                         goto exit;
                 } else {
