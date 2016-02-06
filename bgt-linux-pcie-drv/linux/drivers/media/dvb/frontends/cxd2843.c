@@ -1999,8 +1999,8 @@ static int probe(struct cxd_state *state)
 	return 0;
 }
 
-struct dvb_frontend *cxd2843_attach(struct i2c_adapter *i2c,
-				    struct cxd2843_cfg *cfg)
+struct dvb_frontend *cxd2843_attach(struct cxd2843_cfg *cfg,
+				struct i2c_adapter *i2c)
 {
 	struct cxd_state *state = NULL;
 

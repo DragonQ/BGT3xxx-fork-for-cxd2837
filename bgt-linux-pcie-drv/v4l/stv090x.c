@@ -1,1 +1,0 @@
-../linux/drivers/media/dvb/frontends/stv090x.c

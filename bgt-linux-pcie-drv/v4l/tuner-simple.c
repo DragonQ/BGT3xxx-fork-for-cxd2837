@@ -1,1 +1,0 @@
-../linux/drivers/media/common/tuners/tuner-simple.c

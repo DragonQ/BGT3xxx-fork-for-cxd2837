@@ -1,1 +1,0 @@
-../linux/drivers/media/video/v4l1-compat.c
