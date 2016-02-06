@@ -13,13 +13,13 @@ struct cxd2843_cfg {
 #if defined(CONFIG_DVB_CXD2843) || \
 	(defined(CONFIG_DVB_CXD2843_MODULE) && defined(MODULE))
 
-extern struct dvb_frontend *cxd2843_attach(struct i2c_adapter *i2c,
-					   struct cxd2843_cfg *cfg);
+extern struct dvb_frontend *cxd2843_attach(struct cxd2843_cfg *cfg,
+					struct i2c_adapter *i2c);
 
 #else
 
-static inline struct dvb_frontend *cxd2843_attach(struct i2c_adapter *i2c,
-					   struct cxd2843_cfg *cfg)
+static inline struct dvb_frontend *cxd2843_attach(struct cxd2843_cfg *cfg,
+					struct i2c_adapter *i2c)
 {
 	pr_warn("%s: driver disabled by Kconfig\n", __func__);
 	return NULL;

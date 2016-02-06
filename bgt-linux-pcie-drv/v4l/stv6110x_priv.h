@@ -1,0 +1,1 @@
+../linux/drivers/media/dvb/frontends/stv6110x_priv.h

@@ -1,0 +1,1 @@
+../linux/drivers/media/dvb/frontends/lnbh24.h
