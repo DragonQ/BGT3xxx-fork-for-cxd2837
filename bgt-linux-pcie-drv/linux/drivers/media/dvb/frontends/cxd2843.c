@@ -520,7 +520,7 @@ static void Sleep_to_ActiveT(struct cxd_state *state, u32 iffreq)
 	ConfigureTS(state, ActiveT);
 	writeregx(state, 0x00, 0x17, 0x01);   /* Mode */
 	writeregt(state, 0x00, 0x2C, 0x01);   /* Demod Clock */
-	writeregt(state, 0x00, 0x2F, 0x00);   /* Disable RF Monitor */
+	writeregt(state, 0x00, 0x2F, 0x01);   /* Disable RF Monitor */
 	writeregt(state, 0x00, 0x30, 0x00);   /* Enable ADC Clock */
 	writeregt(state, 0x00, 0x41, 0x1A);   /* Enable ADC1 */
 	{
@@ -610,7 +610,7 @@ static void Sleep_to_ActiveT2(struct cxd_state *state, u32 iffreq)
 
 	writeregx(state, 0x00, 0x17, 0x02);   /* Mode */
 	writeregt(state, 0x00, 0x2C, 0x01);   /* Demod Clock */
-	writeregt(state, 0x00, 0x2F, 0x00);   /* Disable RF Monitor */
+	writeregt(state, 0x00, 0x2F, 0x01);   /* Disable RF Monitor */
 	writeregt(state, 0x00, 0x30, 0x00);   /* Enable ADC Clock */
 	writeregt(state, 0x00, 0x41, 0x1A);   /* Enable ADC1 */
 
@@ -661,7 +661,7 @@ static void Sleep_to_ActiveC(struct cxd_state *state, u32 iffreq)
 
 	writeregx(state, 0x00, 0x17, 0x04);   /* Mode */
 	writeregt(state, 0x00, 0x2C, 0x01);   /* Demod Clock */
-	writeregt(state, 0x00, 0x2F, 0x00);   /* Disable RF Monitor */
+	writeregt(state, 0x00, 0x2F, 0x01);   /* Disable RF Monitor */
 	writeregt(state, 0x00, 0x30, 0x00);   /* Enable ADC Clock */
 	writeregt(state, 0x00, 0x41, 0x1A);   /* Enable ADC1 */
 
@@ -731,7 +731,7 @@ static void Sleep_to_ActiveC2(struct cxd_state *state, u32 iffreq)
 
 	writeregx(state, 0x00, 0x17, 0x05);   /* Mode */
 	writeregt(state, 0x00, 0x2C, 0x01);   /* Demod Clock */
-	writeregt(state, 0x00, 0x2F, 0x00);   /* Disable RF Monitor */
+	writeregt(state, 0x00, 0x2F, 0x01);   /* Disable RF Monitor */
 	writeregt(state, 0x00, 0x30, 0x00);   /* Enable ADC Clock */
 	writeregt(state, 0x00, 0x41, 0x1A);   /* Enable ADC1 */
 
