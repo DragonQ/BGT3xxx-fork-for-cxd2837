@@ -1169,6 +1169,9 @@ static struct saa7231_config purus_blackgold_bgt3630 = {
 
 static struct saa7231_config purus_blackgold_bgt3600 = {
 	.desc			= DEVICE_DESC(BGT3600),
+	.a_tvc			=1,
+	.v_cap			=1,
+	.a_cap			=1,
 
 	.xtal			= 54,
 	.i2c_rate		= SAA7231_I2C_RATE_100,
@@ -1359,7 +1362,10 @@ static struct saa7231_config purus_mpcie_ref_config = {
 };
 static struct saa7231_config purus_blackgold_bgt3602 = {
         .desc                   = DEVICE_DESC(BGT3602),
-
+	.a_tvc			=1,
+	.v_cap			=1,
+	.a_cap			=1,
+	
         .xtal                   = 54,
         .i2c_rate               = SAA7231_I2C_RATE_100,
         .root_clk               = CLK_ROOT_54MHz,

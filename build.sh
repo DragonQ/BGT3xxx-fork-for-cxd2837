@@ -1,9 +1,9 @@
 #!/bin/bash
 
 #Pull latest code
-git pull
-git reset --hard
-git log -1
+#git pull
+#git reset --hard
+#git log -1
 
 #Set execute flag on perl and bash scripts
 chmod u+x bgt-linux-pcie-drv/v4l/scripts/*.pl

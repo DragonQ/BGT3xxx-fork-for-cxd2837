@@ -376,7 +376,7 @@ int saa7231_dvb_init(struct saa7231_dev *saa7231)
 
 	saa7231->adapters = BUILTIN_ADAPTERS + config->ext_dvb_adapters;
 
-	dprintk(SAA7231_INFO, 1, "INFO: Device supoort %d DVB adapters", saa7231->adapters);
+	dprintk(SAA7231_INFO, 1, "INFO: Device support %d DVB adapters", saa7231->adapters);   /* fix spelling mistake*/ 
 	dvb = kzalloc((sizeof (struct saa7231_dvb) * saa7231->adapters), GFP_KERNEL);
 	if (!dvb) {
 		dprintk(SAA7231_ERROR, 1, "ERROR: Allocating %d DVB Adapters", saa7231->adapters);
