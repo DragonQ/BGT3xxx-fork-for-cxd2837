@@ -366,6 +366,7 @@ static int read_tps(struct cxd_state *state, u8 *tps)
 
 static void Active_to_Sleep(struct cxd_state *state)
 {
+	dprintk(FE_ERROR, 1, "cx2843  Active_to_Sleep???");
 	if (state->state <= Sleep)
 		return;
 
@@ -383,6 +384,7 @@ static void Active_to_Sleep(struct cxd_state *state)
 
 static void ActiveT2_to_Sleep(struct cxd_state *state)
 {
+dprintk(FE_ERROR, 1, "cx2843  ActiveT2_to_Sleep???");	
 	if (state->state <= Sleep)
 		return;
 
@@ -406,6 +408,7 @@ static void ActiveT2_to_Sleep(struct cxd_state *state)
 
 static void ActiveC2_to_Sleep(struct cxd_state *state)
 {
+	dprintk(FE_ERROR, 1, "cx2843  ActiveC2_to_Sleep???");
 	if (state->state <= Sleep)
 		return;
 
@@ -481,7 +484,7 @@ static int ConfigureTS(struct cxd_state *state,
 
 static void BandSettingT(struct cxd_state *state, u32 iffreq)
 {
-		dprintk(FE_ERROR, 1, "doing bandsettingT ???");
+		dprintk(FE_ERROR, 1, "CXD2843 doing bandsettingT ???");
 	u8 IF_data[3] = { (iffreq >> 16) & 0xff,
 			  (iffreq >> 8) & 0xff, iffreq & 0xff};
 
@@ -544,7 +547,7 @@ static void BandSettingT(struct cxd_state *state, u32 iffreq)
 
 static void Sleep_to_ActiveT(struct cxd_state *state, u32 iffreq)
 {
-	dprintk(FE_ERROR, 1, "doing sleep to t ???");
+	dprintk(FE_ERROR, 1, "CXD2843 doing sleep to t ???");
 	ConfigureTS(state, ActiveT);
 	writeregx(state, 0x00, 0x17, 0x01);   /* Mode */
 	writeregt(state, 0x00, 0x2C, 0x01);   /* Demod Clock */
@@ -580,6 +583,7 @@ static void Sleep_to_ActiveT(struct cxd_state *state, u32 iffreq)
 
 static void BandSettingT2(struct cxd_state *state, u32 iffreq)
 {
+	dprintk(FE_ERROR, 1, "CXD2843 doing bandsettingT2 ???");
 	u8 IF_data[3] = {(iffreq >> 16) & 0xff, (iffreq >> 8) & 0xff,
 			 iffreq & 0xff};
 
@@ -635,7 +639,7 @@ static void BandSettingT2(struct cxd_state *state, u32 iffreq)
 static void Sleep_to_ActiveT2(struct cxd_state *state, u32 iffreq)
 {
 	ConfigureTS(state, ActiveT2);
-	dprintk(FE_ERROR, 1, "doing sleep to t2 ???");
+	dprintk(FE_ERROR, 1, "CXD2843 doing sleep to t2 ???");
 	writeregx(state, 0x00, 0x17, 0x02);   /* Mode */
 	writeregt(state, 0x00, 0x2C, 0x01);   /* Demod Clock */
 	writeregt(state, 0x00, 0x2F, 0x01);   /* Disable RF Monitor */
@@ -1183,6 +1187,7 @@ static int set_parameters(struct dvb_frontend *fe)
 		state->plp = fe->dtv_property_cache.stream_id & 0xff;
 	}
 	/* printk("PLP = %08x, bw = %u\n", state->plp, state->bw); */
+	dprintk(FE_ERROR, 1, "CXD2843 PLP = %08x, bw = %u\n", state->plp, state->bw);
 	fe->ops.tuner_ops.get_if_frequency(fe, &IF);
 	stat = Start(state, IF);
 	return stat;
@@ -1258,6 +1263,7 @@ static void init_state(struct cxd_state *state, struct cxd2843_cfg *cfg)
 static int get_tune_settings(struct dvb_frontend *fe,
 			     struct dvb_frontend_tune_settings *sets)
 {
+	dprintk(FE_ERROR, 1, "CXD2843 doing get_tune_settings ???");
 	switch (fe->dtv_property_cache.delivery_system) {
 	case SYS_DVBC_ANNEX_A:
 	case SYS_DVBC_ANNEX_C:
@@ -1586,6 +1592,7 @@ static void GetSignalToNoiseC2(struct cxd_state *state, u32 *SignalToNoise)
 
 static void GetSignalToNoiseT2(struct cxd_state *state, u32 *SignalToNoise)
 {
+	dprintk(FE_ERROR, 1, "CXD2843 doing GetSignalToNoiseT2 ???");
 	u8 Data[2];
 	u32 reg;
 
@@ -1602,6 +1609,7 @@ static void GetSignalToNoiseT2(struct cxd_state *state, u32 *SignalToNoise)
 
 static void GetSignalToNoiseT(struct cxd_state *state, u32 *SignalToNoise)
 {
+	dprintk(FE_ERROR, 1, "CXD2843 doing GetSignalToNoiseT ???");
 	u8 Data[2];
 	u32 reg;
 
