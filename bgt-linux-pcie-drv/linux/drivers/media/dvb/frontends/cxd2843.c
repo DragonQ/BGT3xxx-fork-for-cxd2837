@@ -40,6 +40,32 @@
 
 #define USE_ALGO 1
 
+static unsigned int verbose;
+module_param(verbose, int, 0644);
+MODULE_PARM_DESC(verbose, "Set Verbosity level");
+
+#define FE_ERROR				0
+#define FE_NOTICE				1
+#define FE_INFO					2
+#define FE_DEBUG				3
+#define FE_DEBUGREG				4
+
+#define dprintk(__y, __z, format, arg...) do {						\
+	if (__z) {									\
+		if	((verbose > FE_ERROR) && (verbose > __y))			\
+			printk(KERN_ERR "%s: " format "\n", __func__ , ##arg);		\
+		else if	((verbose > FE_NOTICE) && (verbose > __y))			\
+			printk(KERN_NOTICE "%s: " format "\n", __func__ , ##arg);	\
+		else if ((verbose > FE_INFO) && (verbose > __y))			\
+			printk(KERN_INFO "%s: " format "\n", __func__ , ##arg);		\
+		else if ((verbose > FE_DEBUG) && (verbose > __y))			\
+			printk(KERN_DEBUG "%s: " format "\n", __func__ , ##arg);	\
+	} else {									\
+		if (verbose > __y)							\
+			printk(format, ##arg);						\
+	}										\
+} while (0)
+
 enum EDemodType { CXD2843, CXD2837, CXD2838 };
 enum EDemodState { Unknown, Shutdown, Sleep, ActiveT,
 		   ActiveT2, ActiveC, ActiveC2, ActiveIT };
@@ -455,6 +481,7 @@ static int ConfigureTS(struct cxd_state *state,
 
 static void BandSettingT(struct cxd_state *state, u32 iffreq)
 {
+		dprintk(FE_ERROR, 1, "doing bandsettingT ???");
 	u8 IF_data[3] = { (iffreq >> 16) & 0xff,
 			  (iffreq >> 8) & 0xff, iffreq & 0xff};
 
@@ -517,6 +544,7 @@ static void BandSettingT(struct cxd_state *state, u32 iffreq)
 
 static void Sleep_to_ActiveT(struct cxd_state *state, u32 iffreq)
 {
+	dprintk(FE_ERROR, 1, "doing sleep to t ???");
 	ConfigureTS(state, ActiveT);
 	writeregx(state, 0x00, 0x17, 0x01);   /* Mode */
 	writeregt(state, 0x00, 0x2C, 0x01);   /* Demod Clock */
@@ -607,7 +635,7 @@ static void BandSettingT2(struct cxd_state *state, u32 iffreq)
 static void Sleep_to_ActiveT2(struct cxd_state *state, u32 iffreq)
 {
 	ConfigureTS(state, ActiveT2);
-
+	dprintk(FE_ERROR, 1, "doing sleep to t2 ???");
 	writeregx(state, 0x00, 0x17, 0x02);   /* Mode */
 	writeregt(state, 0x00, 0x2C, 0x01);   /* Demod Clock */
 	writeregt(state, 0x00, 0x2F, 0x01);   /* Disable RF Monitor */
@@ -1431,7 +1459,7 @@ static int read_ber(struct dvb_frontend *fe, u32 *ber)
 }
 
 static int read_signal_strength(struct dvb_frontend *fe, u16 *strength)
-{
+{	dprintk(FE_ERROR, 1, "reading signal strength ???");
 	if (fe->ops.tuner_ops.get_rf_strength)
 		fe->ops.tuner_ops.get_rf_strength(fe, strength);
 	else
@@ -1626,7 +1654,7 @@ static int read_snr(struct dvb_frontend *fe, u16 *snr)
 {
 	struct cxd_state *state = fe->demodulator_priv;
 	u32 SNR = 0;
-
+	dprintk(FE_ERROR, 1, "reading snr ???");
 	*snr = 0;
 	if (state->last_status != 0x1f)
 		return 0;
@@ -1666,7 +1694,7 @@ static int tune(struct dvb_frontend *fe, bool re_tune,
 {
 	struct cxd_state *state = fe->demodulator_priv;
 	int r;
-
+	dprintk(FE_ERROR, 1, "setting tuner ???");
 	if (re_tune) {
 		r = set_parameters(fe);
 		if (r)
@@ -1977,6 +2005,7 @@ static int probe(struct cxd_state *state)
 		return status;
 
 	/*printk("ChipID  = %02X\n", ChipID);*/
+	dprintk(FE_ERROR, 1, "finding chip id = %02X\n ???", ChipID);
 	switch (ChipID) {
 	case 0xa4:
 		state->type = CXD2843;
@@ -2003,6 +2032,7 @@ static int probe(struct cxd_state *state)
 struct dvb_frontend *cxd2843_attach(struct cxd2843_cfg *cfg,
 				struct i2c_adapter *i2c)
 {
+	dprintk(FE_ERROR, 1, "loading CXD2843 ???");
 	struct cxd_state *state = NULL;
 
 	state = kzalloc(sizeof(struct cxd_state), GFP_KERNEL);

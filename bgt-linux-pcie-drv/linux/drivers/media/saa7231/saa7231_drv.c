@@ -99,7 +99,7 @@ MODULE_PARM_DESC(verbose, "verbose startup messages, default is 1 (yes)");
 MODULE_PARM_DESC(int_type, "force Interrupt Handler type: 0=INT-A, 1=MSI, 2=MSI-X. default INT-A mode");
 
 #define DRIVER_NAME				"SAA7231"
-#define DRIVER_VER				"0.0.91"
+#define DRIVER_VER				"0.0.93"
 #define MODULE_DBG				(((saa7231)->verbose == SAA7231_DEBUG) ? 1 : 0)
 
 extern void saa7231_dump_write(struct saa7231_dev *saa7231);
@@ -507,8 +507,8 @@ static struct cxd2861_cfg bgt3636_cxd2861_config = {
 };
 
 static struct cxd2843_cfg bgt3602_cxd2843_cfg = {
-        .adr		 = (0xd8 >> 1),
-        .ts_clock 	= 1,
+    .adr		 = (0xd8 >> 1),
+    .ts_clock 	= 1,
 	.parallel 	= 0,
 };
 
@@ -689,11 +689,11 @@ static int saa7231_frontend_enable(struct saa7231_dev *saa7231)
 		if (saa7231_gpio_reset(saa7231, GPIO_2, 50) < 0)
 			ret = -EIO;
 		break;
-        case SUBSYS_INFO(BLACKGOLD_TECHNOLOGY, BLACKGOLD_BGT3602):
-                GPIO_SET_OUT(GPIO_1);
-                if (saa7231_gpio_reset(saa7231, GPIO_1, 50) < 0)
-                        ret = -EIO;
-                break;
+    case SUBSYS_INFO(BLACKGOLD_TECHNOLOGY, BLACKGOLD_BGT3602):
+        GPIO_SET_OUT(GPIO_1);
+        if (saa7231_gpio_reset(saa7231, GPIO_1, 50) < 0)
+            ret = -EIO;
+        break;
 	}
 	return ret;
 }
@@ -898,13 +898,15 @@ static int saa7231_frontend_attach(struct saa7231_dvb *dvb, int frontend)
 		ret = 0;
 		break;   old detection  */
 	case SUBSYS_INFO(BLACKGOLD_TECHNOLOGY, BLACKGOLD_BGT3600):
+		dprintk(SAA7231_ERROR, 1, "BGT3600 Found .. !");
 		dvb->fe = dvb_attach(cxd2820r_attach,
 				     &bgt3620_cxd2820r_config,
 				     &saa7231->i2c[1 + frontend].i2c_adapter,
 				     NULL);
 
 		if (!dvb->fe) {
-				dprintk(SAA7231_ERROR, 1, "Frontend:%d attach failed", frontend);
+				dprintk(SAA7231_ERROR, 1, "Frontend:%d attach failed for cxd2820r", frontend);
+				dprintk(SAA7231_ERROR, 1, "BGT3602 Found with 3600 id !");
 				dvb->fe = dvb_attach(cxd2843_attach,
                             &bgt3602_cxd2843_cfg,
                             &saa7231->i2c[1 + frontend].i2c_adapter);
