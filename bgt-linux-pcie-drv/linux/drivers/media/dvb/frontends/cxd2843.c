@@ -1277,7 +1277,11 @@ static int get_stats(struct dvb_frontend *fe)
 }
 
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 2, 0)
+static int read_status(struct dvb_frontend *fe, enum fe_status_t *status)
+#else
 static int read_status(struct dvb_frontend *fe, fe_status_t *status)
+#endif
 {
 	struct cxd_state *state = fe->demodulator_priv;
 	u8 rdata;
