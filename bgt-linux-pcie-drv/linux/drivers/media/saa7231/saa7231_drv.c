@@ -526,6 +526,7 @@ static struct cxd2843_cfg bgt3602_cxd2843_cfg = {
 #define BLACKGOLD_BGT3596		0x3596
 #define BLACKGOLD_BGT3595		0x3595
 #define BLACKGOLD_BGT3600		0x3600
+#define BLACKGOLD_BGT3602		0x3602
 #define BLACKGOLD_BGT3620		0x3620
 #define BLACKGOLD_BGT3630		0x3630
 #define BLACKGOLD_BGT3650		0x3650
@@ -535,7 +536,7 @@ static struct cxd2843_cfg bgt3602_cxd2843_cfg = {
 #define BLACKGOLD_BGT3695		0x3695
 #define BLACKGOLD_BGT3696		0x3696
 #define BLACKGOLD_BGT3636		0x3636
-#define BLACKGOLD_BGT3602		0x3602
+
 
 #define SUBVENDOR_ALL			0x0000
 #define SUBDEVICE_ALL			0x0000
@@ -546,26 +547,48 @@ static struct cxd2843_cfg bgt3602_cxd2843_cfg = {
 	.type		= (__type),			\
 }
 
-#define PURUS_PCIE			0
-#define PURUS_MPCIE			1
-#define PURUS_PCI			2
-
-#define BGT3595				3
-#define BGT3596				4
-#define BGT3585				5
-#define BGT3576				6
-#define BGT3575				7
-#define BGT3600				8
-#define BGT3620				9
-#define BGT3630			       10
-#define BGT3650			       11
-#define BGT3651			       12
-#define BGT3660			       13
-#define BGT3685			       14
-#define BGT3695			       15
-#define BGT3696			       16
-#define BGT3636			       17
-#define BGT3602				18
+enum {
+			PURUS_PCIE = 0, 
+			PURUS_MPCIE,  
+			PURUS_PCI,		 
+			             
+			BGT3595,			 
+			BGT3596,		 
+			BGT3585,		 
+			BGT3576,		 
+			BGT3575,		 
+			BGT3600,
+			BGT3602,		 
+			BGT3620,		 
+			BGT3630,			 
+			BGT3650,			 
+			BGT3651,			 
+			BGT3660,			 
+			BGT3685,			 
+			BGT3695,			 
+			BGT3696,			 
+			BGT3636
+};		
+//#define PURUS_PCIE			0
+//#define PURUS_MPCIE			1
+//#define PURUS_PCI			2
+//
+//#define BGT3595				3
+//#define BGT3596				4
+//#define BGT3585				5
+//#define BGT3576				6
+//#define BGT3575				7
+//#define BGT3600				8
+//#define BGT3620				9
+//#define BGT3630			       10
+//#define BGT3650			       11
+//#define BGT3651			       12
+//#define BGT3660			       13
+//#define BGT3685			       14
+//#define BGT3695			       15
+//#define BGT3696			       16
+//#define BGT3636			       17
+//#define BGT3602				18
 
 static struct card_desc saa7231_desc[] = {
 	MAKE_DESC(NXP,		"Purus PCIe",	"DVB-S + DVB-T + Analog Ref. design"),
@@ -578,6 +601,7 @@ static struct card_desc saa7231_desc[] = {
 	MAKE_DESC(BLACKGOLD,	"BGT3576", 	"DVB-S/S2 + ATSC"),
 	MAKE_DESC(BLACKGOLD,	"BGT3575", 	"DVB-S/S2 + DVB-T/H"),
 	MAKE_DESC(BLACKGOLD,	"BGT3600",	"DVB-T/T2 + Analog"),
+	MAKE_DESC(BLACKGOLD,	"BGT3602",	"DVB-T/T2/C + Analog"),
 	MAKE_DESC(BLACKGOLD,	"BGT3620",	"Dual DVB-T/T2/C + Analog"),
 	MAKE_DESC(BLACKGOLD,	"BGT3630",	"DVB-T/T2 + DVB-S/S2 + Analog"),
 	MAKE_DESC(BLACKGOLD,	"BGT3650",	"Dual DVB-T/T2 + Analog"),
@@ -587,7 +611,7 @@ static struct card_desc saa7231_desc[] = {
 	MAKE_DESC(BLACKGOLD,	"BGT3695",	"Dual DVB-T + Analog"),
 	MAKE_DESC(BLACKGOLD,	"BGT3696",	"Dual ATSC + Analog"),
 	MAKE_DESC(BLACKGOLD,	"BGT3636",	"DVB-S/S2 + DVB-T/T2/C + Analog"),
-	MAKE_DESC(BLACKGOLD,	"BGT3602",	"DVB-T/T2/C + Analog"),
+	
 	{ }
 };
 
@@ -690,8 +714,8 @@ static int saa7231_frontend_enable(struct saa7231_dev *saa7231)
 			ret = -EIO;
 		break;
     case SUBSYS_INFO(BLACKGOLD_TECHNOLOGY, BLACKGOLD_BGT3602):
-        GPIO_SET_OUT(GPIO_1);
-        if (saa7231_gpio_reset(saa7231, GPIO_1, 50) < 0)
+        GPIO_SET_OUT(GPIO_2);
+        if (saa7231_gpio_reset(saa7231, GPIO_2, 50) < 0)
             ret = -EIO;
         break;
 	}
@@ -1375,9 +1399,9 @@ static struct saa7231_config purus_blackgold_bgt3602 = {
 
         .ext_dvb_adapters       = 2,
         .ts0_cfg                = 0x41,
-        .ts0_clk                = 0x05,
+        .ts0_clk                = 0x01, //change from 05
         .ts1_cfg                = 0x41,
-        .ts1_clk                = 0x05,
+        .ts1_clk                = 0x01, //change from 05
         .frontend_enable        = saa7231_frontend_enable,
         .frontend_attach        = saa7231_frontend_attach,
 

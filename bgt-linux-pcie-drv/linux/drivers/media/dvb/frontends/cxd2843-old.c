@@ -34,17 +34,44 @@
 #include <linux/mutex.h>
 #include <asm/div64.h>
 
+#include <linux/dvb/frontend.h>
 #include "dvb_frontend.h"
 #include "cxd2843.h"
 
 #define USE_ALGO 1
 
-enum demod_type { CXD2843, CXD2837, CXD2838 };
-enum demod_state { Unknown, Shutdown, Sleep, ActiveT,
+static unsigned int verbose;
+module_param(verbose, int, 0644);
+MODULE_PARM_DESC(verbose, "Set Verbosity level");
+
+#define FE_ERROR				0
+#define FE_NOTICE				1
+#define FE_INFO					2
+#define FE_DEBUG				3
+#define FE_DEBUGREG				4
+
+#define dprintk(__y, __z, format, arg...) do {						\
+	if (__z) {									\
+		if	((verbose > FE_ERROR) && (verbose > __y))			\
+			printk(KERN_ERR "%s: " format "\n", __func__ , ##arg);		\
+		else if	((verbose > FE_NOTICE) && (verbose > __y))			\
+			printk(KERN_NOTICE "%s: " format "\n", __func__ , ##arg);	\
+		else if ((verbose > FE_INFO) && (verbose > __y))			\
+			printk(KERN_INFO "%s: " format "\n", __func__ , ##arg);		\
+		else if ((verbose > FE_DEBUG) && (verbose > __y))			\
+			printk(KERN_DEBUG "%s: " format "\n", __func__ , ##arg);	\
+	} else {									\
+		if (verbose > __y)							\
+			printk(format, ##arg);						\
+	}										\
+} while (0)
+
+enum EDemodType { CXD2843, CXD2837, CXD2838 };
+enum EDemodState { Unknown, Shutdown, Sleep, ActiveT,
 		   ActiveT2, ActiveC, ActiveC2, ActiveIT };
-enum t2_profile { T2P_Base, T2P_Lite };
+enum ET2Profile { T2P_Base, T2P_Lite };
 enum omode { OM_NONE, OM_DVBT, OM_DVBT2, OM_DVBC,
-	     OM_QAM_ITU_C, OM_DVBC2, OM_ISDBT };
+	     OM_QAM_ITU_C, OM_ISDBT }; /* removed OM_DVBC2 */
 
 struct cxd_state {
 	struct dvb_frontend   frontend;
@@ -57,9 +84,9 @@ struct cxd_state {
 	u8  adrx;
 	u8  curbankx;
 
-	enum demod_type  type;
-	enum demod_state state;
-	enum t2_profile T2Profile;
+	enum EDemodType  type;
+	enum EDemodState state;
+	enum ET2Profile T2Profile;
 	enum omode omode;
 
 	u8    IF_FS;
@@ -339,6 +366,7 @@ static int read_tps(struct cxd_state *state, u8 *tps)
 
 static void Active_to_Sleep(struct cxd_state *state)
 {
+	dprintk(FE_ERROR, 1, "cx2843  Active_to_Sleep???");
 	if (state->state <= Sleep)
 		return;
 
@@ -356,6 +384,7 @@ static void Active_to_Sleep(struct cxd_state *state)
 
 static void ActiveT2_to_Sleep(struct cxd_state *state)
 {
+dprintk(FE_ERROR, 1, "cx2843  ActiveT2_to_Sleep???");	
 	if (state->state <= Sleep)
 		return;
 
@@ -379,6 +408,7 @@ static void ActiveT2_to_Sleep(struct cxd_state *state)
 
 static void ActiveC2_to_Sleep(struct cxd_state *state)
 {
+	dprintk(FE_ERROR, 1, "cx2843  ActiveC2_to_Sleep???");
 	if (state->state <= Sleep)
 		return;
 
@@ -421,7 +451,7 @@ static void ActiveC2_to_Sleep(struct cxd_state *state)
 }
 
 static int ConfigureTS(struct cxd_state *state,
-		       enum demod_state newDemodState)
+		       enum EDemodState newDemodState)
 {
 	int status = 0;
 	u8 OSERCKMODE = state->SerialMode ?  1 : 0;
@@ -454,6 +484,7 @@ static int ConfigureTS(struct cxd_state *state,
 
 static void BandSettingT(struct cxd_state *state, u32 iffreq)
 {
+		dprintk(FE_ERROR, 1, "CXD2843 doing bandsettingT ???");
 	u8 IF_data[3] = { (iffreq >> 16) & 0xff,
 			  (iffreq >> 8) & 0xff, iffreq & 0xff};
 
@@ -516,10 +547,11 @@ static void BandSettingT(struct cxd_state *state, u32 iffreq)
 
 static void Sleep_to_ActiveT(struct cxd_state *state, u32 iffreq)
 {
+	dprintk(FE_ERROR, 1, "CXD2843 doing sleep to t ???");
 	ConfigureTS(state, ActiveT);
 	writeregx(state, 0x00, 0x17, 0x01);   /* Mode */
 	writeregt(state, 0x00, 0x2C, 0x01);   /* Demod Clock */
-	writeregt(state, 0x00, 0x2F, 0x00);   /* Disable RF Monitor */
+	writeregt(state, 0x00, 0x2F, 0x01);   /* Disable RF Monitor */
 	writeregt(state, 0x00, 0x30, 0x00);   /* Enable ADC Clock */
 	writeregt(state, 0x00, 0x41, 0x1A);   /* Enable ADC1 */
 	{
@@ -551,6 +583,7 @@ static void Sleep_to_ActiveT(struct cxd_state *state, u32 iffreq)
 
 static void BandSettingT2(struct cxd_state *state, u32 iffreq)
 {
+	dprintk(FE_ERROR, 1, "CXD2843 doing bandsettingT2 ???");
 	u8 IF_data[3] = {(iffreq >> 16) & 0xff, (iffreq >> 8) & 0xff,
 			 iffreq & 0xff};
 
@@ -606,10 +639,10 @@ static void BandSettingT2(struct cxd_state *state, u32 iffreq)
 static void Sleep_to_ActiveT2(struct cxd_state *state, u32 iffreq)
 {
 	ConfigureTS(state, ActiveT2);
-
+	dprintk(FE_ERROR, 1, "CXD2843 doing sleep to t2 ???");
 	writeregx(state, 0x00, 0x17, 0x02);   /* Mode */
 	writeregt(state, 0x00, 0x2C, 0x01);   /* Demod Clock */
-	writeregt(state, 0x00, 0x2F, 0x00);   /* Disable RF Monitor */
+	writeregt(state, 0x00, 0x2F, 0x01);   /* Disable RF Monitor */
 	writeregt(state, 0x00, 0x30, 0x00);   /* Enable ADC Clock */
 	writeregt(state, 0x00, 0x41, 0x1A);   /* Enable ADC1 */
 
@@ -660,7 +693,7 @@ static void Sleep_to_ActiveC(struct cxd_state *state, u32 iffreq)
 
 	writeregx(state, 0x00, 0x17, 0x04);   /* Mode */
 	writeregt(state, 0x00, 0x2C, 0x01);   /* Demod Clock */
-	writeregt(state, 0x00, 0x2F, 0x00);   /* Disable RF Monitor */
+	writeregt(state, 0x00, 0x2F, 0x01);   /* Disable RF Monitor */
 	writeregt(state, 0x00, 0x30, 0x00);   /* Enable ADC Clock */
 	writeregt(state, 0x00, 0x41, 0x1A);   /* Enable ADC1 */
 
@@ -730,7 +763,7 @@ static void Sleep_to_ActiveC2(struct cxd_state *state, u32 iffreq)
 
 	writeregx(state, 0x00, 0x17, 0x05);   /* Mode */
 	writeregt(state, 0x00, 0x2C, 0x01);   /* Demod Clock */
-	writeregt(state, 0x00, 0x2F, 0x00);   /* Disable RF Monitor */
+	writeregt(state, 0x00, 0x2F, 0x01);   /* Disable RF Monitor */
 	writeregt(state, 0x00, 0x30, 0x00);   /* Enable ADC Clock */
 	writeregt(state, 0x00, 0x41, 0x1A);   /* Enable ADC1 */
 
@@ -758,7 +791,6 @@ static void Sleep_to_ActiveC2(struct cxd_state *state, u32 iffreq)
 	writebitst(state, 0x25, 0xCB, 0x01, 0x07);
 	{
 		u8 data[4] = { 0x7B, 0x00, 0x7B, 0x00 };
-
 		writeregst(state, 0x25, 0xDC, data, sizeof(data));
 	}
 	writeregt(state, 0x25, 0xE2, 0x30);
@@ -772,7 +804,6 @@ static void Sleep_to_ActiveC2(struct cxd_state *state, u32 iffreq)
 	writebitst(state, 0x2B, 0x2B, 0x10, 0x1F);
 	{
 		u8 data[2] = { 0x01, 0x01 };
-
 		writeregst(state, 0x2D, 0x24, data, sizeof(data));
 	}
 
@@ -990,18 +1021,9 @@ static void release(struct dvb_frontend *fe)
 	kfree(state);
 }
 
-static int sleep(struct dvb_frontend *fe)
-{
-	struct cxd_state *state = fe->demodulator_priv;
-
-	Stop(state);
-	ShutDown(state);
-	return 0;
-}
-
 static int Start(struct cxd_state *state, u32 IntermediateFrequency)
 {
-	enum demod_state newDemodState = Unknown;
+	enum EDemodState newDemodState = Unknown;
 	u32 iffreq;
 
 	if (state->state < Sleep)
@@ -1026,11 +1048,11 @@ static int Start(struct cxd_state *state, u32 IntermediateFrequency)
 			return -EINVAL;
 		newDemodState = ActiveC;
 		break;
-	case OM_DVBC2:
+/*	case OM_DVBC2:
 		if (state->type != CXD2843)
 			return -EINVAL;
 		newDemodState = ActiveC2;
-		break;
+		break; removed for now */
 	case OM_ISDBT:
 		if (state->type != CXD2838)
 			return -EINVAL;
@@ -1139,7 +1161,7 @@ static int set_parameters(struct dvb_frontend *fe)
 		break;
 /*	case SYS_DVBC2:
 		state->omode = OM_DVBC2;
-		break; */
+		break; removed for now */
 	case SYS_DVBT:
 		state->omode = OM_DVBT;
 		break;
@@ -1165,8 +1187,8 @@ static int set_parameters(struct dvb_frontend *fe)
 		state->plp = fe->dtv_property_cache.stream_id & 0xff;
 	}
 	/* printk("PLP = %08x, bw = %u\n", state->plp, state->bw); */
-	if (fe->ops.tuner_ops.get_if_frequency)
-		fe->ops.tuner_ops.get_if_frequency(fe, &IF);
+	dprintk(FE_ERROR, 1, "CXD2843 PLP = %08x, bw = %u\n", state->plp, state->bw);
+	fe->ops.tuner_ops.get_if_frequency(fe, &IF);
 	stat = Start(state, IF);
 	return stat;
 }
@@ -1182,8 +1204,7 @@ static void init(struct cxd_state *state)
 	writeregx(state, 0xFF, 0x02, 0x00);
 	usleep_range(4000, 5000);
 	writeregx(state, 0x00, 0x15, 0x01);
-	if (state->type != CXD2838)
-		writeregx(state, 0x00, 0x17, 0x01);
+	writeregx(state, 0x00, 0x17, 0x01);
 	usleep_range(4000, 5000);
 
 	writeregx(state, 0x00, 0x10, 0x01);
@@ -1242,6 +1263,7 @@ static void init_state(struct cxd_state *state, struct cxd2843_cfg *cfg)
 static int get_tune_settings(struct dvb_frontend *fe,
 			     struct dvb_frontend_tune_settings *sets)
 {
+	dprintk(FE_ERROR, 1, "CXD2843 doing get_tune_settings ???");
 	switch (fe->dtv_property_cache.delivery_system) {
 	case SYS_DVBC_ANNEX_A:
 	case SYS_DVBC_ANNEX_C:
@@ -1251,31 +1273,6 @@ static int get_tune_settings(struct dvb_frontend *fe,
 		return -EINVAL;
 	}
 }
-
-static int read_snr(struct dvb_frontend *fe, u16 *snr);
-
-static int get_stats(struct dvb_frontend *fe)
-{
-	struct cxd_state *state = fe->demodulator_priv;
-	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
-	u16 val;
-
-	if (fe->ops.tuner_ops.get_rf_strength)
-		fe->ops.tuner_ops.get_rf_strength(fe, &val);
-	else
-		val = 0;
-
-	p->strength.len = 1;
-	p->strength.stat[0].scale = FE_SCALE_DECIBEL;
-	p->strength.stat[0].uvalue = 1000 * (s64) (s16) val;
-	
-	read_snr(fe, &val);
-	p->cnr.len = 1;
-	p->cnr.stat[0].scale = FE_SCALE_DECIBEL;
-	p->cnr.stat[0].uvalue = 100 * (s64) (s16) val;
-	return 0;
-}
-
 
 static int read_status(struct dvb_frontend *fe, fe_status_t *status)
 {
@@ -1438,7 +1435,6 @@ static int get_ber_it(struct cxd_state *state, u32 *n, u32 *d)
 static int read_ber(struct dvb_frontend *fe, u32 *ber)
 {
 	struct cxd_state *state = fe->demodulator_priv;
-	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
 	u32 n, d;
 	int s = 0;
 
@@ -1464,20 +1460,12 @@ static int read_ber(struct dvb_frontend *fe, u32 *ber)
 	}
 	if (s)
 		return s;
-	
-	p->pre_bit_error.len = 1;
-	p->pre_bit_error.stat[0].scale = FE_SCALE_COUNTER;
-	p->pre_bit_error.stat[0].uvalue = n;
-	p->pre_bit_count.len = 1;
-	p->pre_bit_count.stat[0].scale = FE_SCALE_COUNTER;
-	p->pre_bit_count.stat[0].uvalue = d;
-	if (d)
-		*ber = (n * 1000) / d;
+
 	return 0;
 }
 
 static int read_signal_strength(struct dvb_frontend *fe, u16 *strength)
-{
+{	dprintk(FE_ERROR, 1, "reading signal strength ???");
 	if (fe->ops.tuner_ops.get_rf_strength)
 		fe->ops.tuner_ops.get_rf_strength(fe, strength);
 	else
@@ -1604,6 +1592,7 @@ static void GetSignalToNoiseC2(struct cxd_state *state, u32 *SignalToNoise)
 
 static void GetSignalToNoiseT2(struct cxd_state *state, u32 *SignalToNoise)
 {
+	dprintk(FE_ERROR, 1, "CXD2843 doing GetSignalToNoiseT2 ???");
 	u8 Data[2];
 	u32 reg;
 
@@ -1620,6 +1609,7 @@ static void GetSignalToNoiseT2(struct cxd_state *state, u32 *SignalToNoise)
 
 static void GetSignalToNoiseT(struct cxd_state *state, u32 *SignalToNoise)
 {
+	dprintk(FE_ERROR, 1, "CXD2843 doing GetSignalToNoiseT ???");
 	u8 Data[2];
 	u32 reg;
 
@@ -1671,9 +1661,8 @@ static void GetSignalToNoiseC(struct cxd_state *state, u32 *SignalToNoise)
 static int read_snr(struct dvb_frontend *fe, u16 *snr)
 {
 	struct cxd_state *state = fe->demodulator_priv;
-	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
 	u32 SNR = 0;
-
+	dprintk(FE_ERROR, 1, "reading snr ???");
 	*snr = 0;
 	if (state->last_status != 0x1f)
 		return 0;
@@ -1713,7 +1702,7 @@ static int tune(struct dvb_frontend *fe, bool re_tune,
 {
 	struct cxd_state *state = fe->demodulator_priv;
 	int r;
-
+	dprintk(FE_ERROR, 1, "setting tuner ???");
 	if (re_tune) {
 		r = set_parameters(fe);
 		if (r)
@@ -1869,7 +1858,7 @@ static int get_fe_c(struct cxd_state *state)
 	freeze_regst(state);
 	readregst_unlocked(state, 0x40, 0x19, &qam, 1);
 	unfreeze_regst(state);
-	p->modulation = 1 + (qam & 0x07);
+	p->modulation = qam & 0x07;
 	return 0;
 }
 
@@ -1900,9 +1889,9 @@ static int get_frontend(struct dvb_frontend *fe)
 }
 
 static struct dvb_frontend_ops common_ops_2843 = {
-	.delsys = { SYS_DVBC_ANNEX_A, SYS_DVBT, SYS_DVBT2 },
+	.delsys = {  SYS_DVBT2, SYS_DVBT, SYS_DVBC_ANNEX_A, },/* removed SYS_DVBC2 and change order */
 	.info = {
-		.name = "CXD2843 DVB-C/C2 DVB-T/T2",
+		.name = "CXD2843 DVB-C DVB-T/T2",
 		.frequency_stepsize = 166667,	/* DVB-T only */
 		.frequency_min = 47000000,	/* DVB-T: 47125000 */
 		.frequency_max = 865000000,	/* DVB-C: 862000000 */
@@ -1915,14 +1904,12 @@ static struct dvb_frontend_ops common_ops_2843 = {
 			/* DVB-T */
 			FE_CAN_QAM_16 | FE_CAN_QAM_64 | FE_CAN_QAM_AUTO |
 			FE_CAN_FEC_1_2 | FE_CAN_FEC_2_3 | FE_CAN_FEC_3_4 |
-			FE_CAN_FEC_4_5 |
 			FE_CAN_FEC_5_6 | FE_CAN_FEC_7_8 | FE_CAN_FEC_AUTO |
 			FE_CAN_TRANSMISSION_MODE_AUTO |
 			FE_CAN_GUARD_INTERVAL_AUTO | FE_CAN_HIERARCHY_AUTO |
-			FE_CAN_RECOVER | FE_CAN_MUTE_TS | FE_CAN_2G_MODULATION
+			FE_CAN_RECOVER | FE_CAN_MUTE_TS
 	},
 	.release = release,
-	.sleep = sleep,
 	.i2c_gate_ctrl = gate_ctrl,
 	.set_frontend = set_parameters,
 
@@ -1941,26 +1928,28 @@ static struct dvb_frontend_ops common_ops_2843 = {
 };
 
 static struct dvb_frontend_ops common_ops_2837 = {
-	.delsys = { SYS_DVBC_ANNEX_A, SYS_DVBT, SYS_DVBT2 },
+	.delsys = { SYS_DVBT2, SYS_DVBT, SYS_DVBC_ANNEX_A },
 	.info = {
-		.name = "CXD2837 DVB-C DVB-T/T2",
+		.name = "CXD2837 DVB-T/T2 DVB-C",
 		.frequency_stepsize = 166667,	/* DVB-T only */
-		.frequency_min = 47000000,	/* DVB-T: 47125000 */
-		.frequency_max = 865000000,	/* DVB-C: 862000000 */
+		.frequency_min = 42000000,	/* DVB-T: 47125000 */
+		.frequency_max = 870000000,	/* DVB-C: 862000000 */
 		.symbol_rate_min = 870000,
 		.symbol_rate_max = 11700000,
-		.caps = FE_CAN_QPSK | FE_CAN_QAM_16 | FE_CAN_QAM_32 |
-		        FE_CAN_QAM_64 | FE_CAN_QAM_128 | FE_CAN_QAM_256 |
-		        FE_CAN_QAM_AUTO | 
+		.caps = /* DVB-T */
+			FE_CAN_QAM_16 | FE_CAN_QAM_64 | FE_CAN_QAM_AUTO |
 			FE_CAN_FEC_1_2 | FE_CAN_FEC_2_3 | FE_CAN_FEC_3_4 |
-			FE_CAN_FEC_4_5 |
 			FE_CAN_FEC_5_6 | FE_CAN_FEC_7_8 | FE_CAN_FEC_AUTO |
 			FE_CAN_TRANSMISSION_MODE_AUTO |
 			FE_CAN_GUARD_INTERVAL_AUTO | FE_CAN_HIERARCHY_AUTO |
-			FE_CAN_RECOVER | FE_CAN_MUTE_TS | FE_CAN_2G_MODULATION
+			FE_CAN_RECOVER | FE_CAN_MUTE_TS |
+			/* DVB-C */
+			FE_CAN_QAM_16 | FE_CAN_QAM_32 | FE_CAN_QAM_64 |
+			FE_CAN_QAM_128 | FE_CAN_QAM_256 |
+			FE_CAN_FEC_AUTO 
+			
 	},
 	.release = release,
-	.sleep = sleep,
 	.i2c_gate_ctrl = gate_ctrl,
 	.set_frontend = set_parameters,
 
@@ -1987,16 +1976,14 @@ static struct dvb_frontend_ops common_ops_2838 = {
 		.frequency_max = 865000000,
 		.symbol_rate_min = 870000,
 		.symbol_rate_max = 11700000,
-		.caps = FE_CAN_QPSK | FE_CAN_QAM_16 | FE_CAN_QAM_64 | FE_CAN_QAM_AUTO |
+		.caps = FE_CAN_QAM_16 | FE_CAN_QAM_64 | FE_CAN_QAM_AUTO |
 			FE_CAN_FEC_1_2 | FE_CAN_FEC_2_3 | FE_CAN_FEC_3_4 |
-			FE_CAN_FEC_4_5 |
 			FE_CAN_FEC_5_6 | FE_CAN_FEC_7_8 | FE_CAN_FEC_AUTO |
 			FE_CAN_TRANSMISSION_MODE_AUTO |
 			FE_CAN_GUARD_INTERVAL_AUTO | FE_CAN_HIERARCHY_AUTO |
-			FE_CAN_RECOVER | FE_CAN_MUTE_TS | FE_CAN_2G_MODULATION
+			FE_CAN_RECOVER | FE_CAN_MUTE_TS
 	},
 	.release = release,
-	.sleep = sleep,
 	.i2c_gate_ctrl = gate_ctrl,
 	.set_frontend = set_parameters,
 
@@ -2026,6 +2013,7 @@ static int probe(struct cxd_state *state)
 		return status;
 
 	/*printk("ChipID  = %02X\n", ChipID);*/
+	dprintk(FE_ERROR, 1, "finding chip id = %02X\n ???", ChipID);
 	switch (ChipID) {
 	case 0xa4:
 		state->type = CXD2843;
@@ -2049,11 +2037,10 @@ static int probe(struct cxd_state *state)
 	return 0;
 }
 
-/*struct dvb_frontend *cxd2843_attach(struct i2c_adapter *i2c,
-				    struct cxd2843_cfg *cfg)*/
 struct dvb_frontend *cxd2843_attach(struct cxd2843_cfg *cfg,
-					struct i2c_adapter *i2c)
+				struct i2c_adapter *i2c)
 {
+	dprintk(FE_ERROR, 1, "loading CXD2843 ???");
 	struct cxd_state *state = NULL;
 
 	state = kzalloc(sizeof(struct cxd_state), GFP_KERNEL);
@@ -2075,4 +2062,3 @@ EXPORT_SYMBOL(cxd2843_attach);
 MODULE_DESCRIPTION("CXD2843/37/38 driver");
 MODULE_AUTHOR("Ralph Metzler, Manfred Voelkel");
 MODULE_LICENSE("GPL");
-
