@@ -31,7 +31,11 @@
 #include <linux/module.h>
 #include <linux/sched.h>
 #include <linux/string.h>
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 13, 0)
+#include <linux/uaccess.h>
+#else
 #include <asm/uaccess.h>
+#endif
 
 #include "dvb_ringbuffer.h"
 

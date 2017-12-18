@@ -129,8 +129,12 @@ static int saa7231_enable_msix(struct saa7231_dev *saa7231)
 
 	for (i = 0; i < saa7231->msi_vectors_max; i++)
 		saa7231->msix_entries[i].entry = i;
+	#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 13, 0)
+		ret = pci_enable_msix_range(pdev, saa7231->msix_entries, saa7231->msi_vectors_max, saa7231->msi_vectors_max);
+	#else
+		ret = pci_enable_msix(pdev, saa7231->msix_entries, saa7231->msi_vectors_max);
+	#endif
 
-	ret = pci_enable_msix(pdev, saa7231->msix_entries, saa7231->msi_vectors_max);
 	if (ret < 0)
 		dprintk(SAA7231_ERROR, 1, "MSI-X request failed");
 	if (ret > 0)

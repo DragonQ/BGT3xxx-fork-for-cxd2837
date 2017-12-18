@@ -38,6 +38,10 @@
 #include <linux/sched.h>
 #include <linux/kthread.h>
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 13, 0)
+#include <linux/sched/signal.h>
+#endif
+
 #include "dvb_ca_en50221.h"
 #include "dvb_ringbuffer.h"
 
