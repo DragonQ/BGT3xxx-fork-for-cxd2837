@@ -736,7 +736,7 @@ struct dvb_frontend *cxd2820r_attach(const struct cxd2820r_config *cfg,
 #ifdef CONFIG_GPIOLIB
 		/* add GPIOs */
 		priv->gpio_chip.label = KBUILD_MODNAME;
-		#if LINUX_VERSION_CODE >= KERNEL_VERSON(4, 5, 0)
+		#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 5, 0)
 			priv->gpio_chip.parent = &priv->i2c->dev;
 		#else
 			priv->gpio_chip.dev = &priv->i2c->dev;
