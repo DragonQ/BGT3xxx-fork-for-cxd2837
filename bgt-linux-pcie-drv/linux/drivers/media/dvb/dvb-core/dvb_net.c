@@ -54,7 +54,7 @@
  *
  */
 
-#define pr_fmt(fmt) "dvb_net: " fmt
+/*#define pr_fmt(fmt) "dvb_net: " fmt */
 
 #include <linux/module.h>
 #include <linux/kernel.h>
