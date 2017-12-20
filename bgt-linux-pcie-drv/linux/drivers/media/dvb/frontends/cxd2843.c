@@ -1273,8 +1273,11 @@ static int get_tune_settings(struct dvb_frontend *fe,
 		return -EINVAL;
 	}
 }
-
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 2, 0)
+static int read_status(struct dvb_frontend *fe, enum fe_status *status)
+#else
 static int read_status(struct dvb_frontend *fe, fe_status_t *status)
+#endif
 {
 	struct cxd_state *state = fe->demodulator_priv;
 	u8 rdata;
@@ -1698,7 +1701,11 @@ static int read_ucblocks(struct dvb_frontend *fe, u32 *ucblocks)
 
 static int tune(struct dvb_frontend *fe, bool re_tune,
 		unsigned int mode_flags,
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 2, 0)
+		unsigned int *delay, enum fe_status *status)
+#else
 		unsigned int *delay, fe_status_t *status)
+#endif
 {
 	struct cxd_state *state = fe->demodulator_priv;
 	int r;
@@ -1723,7 +1730,11 @@ static enum dvbfe_search search(struct dvb_frontend *fe)
 {
 	int r;
 	u32 loops = 20, i;
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 2, 0)
+	enum fe_status status;
+#else
 	fe_status_t status;
+#endif
 
 	r = set_parameters(fe);
 
