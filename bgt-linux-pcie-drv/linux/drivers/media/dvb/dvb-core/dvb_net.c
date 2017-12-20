@@ -54,6 +54,8 @@
  *
  */
 
+#define pr_fmt(fmt) "dvb_net: " fmt
+
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/netdevice.h>
@@ -1245,7 +1247,9 @@ static void dvb_net_setup(struct net_device *dev)
 	dev->header_ops		= &dvb_header_ops;
 	dev->netdev_ops		= &dvb_netdev_ops;
 	dev->mtu		= 4096;
-
+#if (LINUX_VERSION_CODE >= KERNAL_VERSION(4, 12, 0))
+	dev->max_mtu
+#endif
 	dev->flags |= IFF_NOARP;
 }
 
