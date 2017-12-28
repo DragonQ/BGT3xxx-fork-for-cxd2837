@@ -1,0 +1,1 @@
+cmd_/usr/src/BGT3xxx-fork-for-cxd2837/bgt-linux-pcie-drv/v4l/dvb-pll.ko := ld -r -m elf_i386 -T /usr/src/linux-3.10.17/scripts/module-common.lds --build-id  -o /usr/src/BGT3xxx-fork-for-cxd2837/bgt-linux-pcie-drv/v4l/dvb-pll.ko /usr/src/BGT3xxx-fork-for-cxd2837/bgt-linux-pcie-drv/v4l/dvb-pll.o /usr/src/BGT3xxx-fork-for-cxd2837/bgt-linux-pcie-drv/v4l/dvb-pll.mod.o

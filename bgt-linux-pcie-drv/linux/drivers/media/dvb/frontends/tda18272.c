@@ -1564,6 +1564,8 @@ struct dvb_frontend *tda18272_attach(struct dvb_frontend *fe,
 
 	if (id == TDA18272_CHIP_ID) {
 		dprintk(FE_ERROR, 1, "Found TDA%d %s Rev:%d.%d", id, mode ? "Master" : "Slave", major, minor);
+		printk("41MHZ Found TDA%d %s Rev:%d.%d", id, mode ? "Master" : "Slave", major, minor);
+		
 		if ((major != TDA18272_MAJOR_REV) || (minor != TDA18272_MINOR_REV))
 			dprintk(FE_ERROR, 1, "Unknown Version:%d.%d, trying anyway ..", major, minor);
 

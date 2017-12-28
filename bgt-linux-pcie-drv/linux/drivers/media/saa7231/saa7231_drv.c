@@ -510,6 +510,7 @@ static struct cxd2843_cfg bgt3602_cxd2843_cfg = {
     .adr		 = (0xd8 >> 1),
     .ts_clock 	= 1,
 	.parallel 	= 0,
+	.osc = 20500000, //konstantin
 };
 
 #define NXP				"NXP Semiconductor"
@@ -927,13 +928,14 @@ static int saa7231_frontend_attach(struct saa7231_dvb *dvb, int frontend)
 				     &bgt3620_cxd2820r_config,
 				     &saa7231->i2c[1 + frontend].i2c_adapter,
 				     NULL);
+		printk("BGT3600_41MHz\n");
 
 		if (!dvb->fe) {
 				dprintk(SAA7231_ERROR, 1, "Frontend:%d attach failed for cxd2820r", frontend);
 				dprintk(SAA7231_ERROR, 1, "BGT3602 Found with 3600 id !");
 				dvb->fe = dvb_attach(cxd2843_attach,
-                            &bgt3602_cxd2843_cfg,
-                            &saa7231->i2c[1 + frontend].i2c_adapter);
+                            &saa7231->i2c[1 + frontend].i2c_adapter,
+                            &bgt3602_cxd2843_cfg);
           		if(!dvb->fe) {
 				dprintk(SAA7231_ERROR, 1, "Frontend:%d attach failed", frontend);
 				ret = -ENODEV;
@@ -1114,8 +1116,8 @@ static int saa7231_frontend_attach(struct saa7231_dvb *dvb, int frontend)
 		break;
         case SUBSYS_INFO(BLACKGOLD_TECHNOLOGY, BLACKGOLD_BGT3602):
                 dvb->fe = dvb_attach(cxd2843_attach,
-                                     &bgt3602_cxd2843_cfg,
-                                     &saa7231->i2c[1 + frontend].i2c_adapter);
+                                     &saa7231->i2c[1 + frontend].i2c_adapter,
+                                     &bgt3602_cxd2843_cfg);
 
                 if (!dvb->fe) {
                         dprintk(SAA7231_ERROR, 1, "Frontend:%d attach failed", frontend);
