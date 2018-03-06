@@ -1043,6 +1043,7 @@ static int dvb_demux_do_ioctl(struct file *file,
 			break;
 		}
 		ret = dmxdev->demux->set_source(dmxdev->demux, parg);
+		break;
 
 #endif
 
