@@ -1028,7 +1028,7 @@ static int dvb_demux_do_ioctl(struct file *file,
 		}
 		dmxdev->demux->get_pes_pids(dmxdev->demux, parg);
 		break;
-
+#if LINUX_VERSION_CODE <= KERNEL_VERSION(4,13,0)
 	case DMX_GET_CAPS:
 		if (!dmxdev->demux->get_caps) {
 			ret = -EINVAL;
@@ -1043,7 +1043,8 @@ static int dvb_demux_do_ioctl(struct file *file,
 			break;
 		}
 		ret = dmxdev->demux->set_source(dmxdev->demux, parg);
-		break;
+
+#endif
 
 	case DMX_GET_STC:
 		if (!dmxdev->demux->get_stc) {

@@ -1373,7 +1373,14 @@ em_static void parse_nit(const unsigned char * buf, uint16_t section_length, uin
 
      parse_descriptors(table_id, buf + 6, descriptors_loop_len, &tn, flags.scantype);
      tn.source |= table_id << 8;
-     
+
+    // patch from Andy Bruns 25/02/2018    
+    if (tn.frequency == 0)
+    {
+    info("......IGNORE ZERO FREQ:\n");
+    break;
+    }
+         
      t = find_transponder(original_network_id, network_id, transport_stream_id);      // try to find tp by transport_stream_id;
      if (t == NULL) {
         if ((t = find_transponder_by_freq(&tn))) {
