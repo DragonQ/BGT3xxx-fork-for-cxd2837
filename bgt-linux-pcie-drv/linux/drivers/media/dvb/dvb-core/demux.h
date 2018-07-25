@@ -230,9 +230,15 @@ struct dmx_demux {
 
 	int (*get_pes_pids) (struct dmx_demux* demux, u16 *pids);
 
-	int (*get_caps) (struct dmx_demux* demux, struct dmx_caps *caps);
+	#if LINUX_VERSION_CODE <= KERNEL_VERSION(4,14,0)
+		int (*get_caps) (struct dmx_demux* demux, struct dmx_caps *caps);
 
-	int (*set_source) (struct dmx_demux* demux, const dmx_source_t *src);
+		int (*set_source) (struct dmx_demux* demux, const dmx_source_t *src);
+	#else
+		//int (*get_caps) (struct dmx_demux* demux, struct dmx_caps *caps);
+
+		//int (*set_source) (struct dmx_demux* demux, const dmx_source_t *src);
+	#endif
 
 	int (*get_stc) (struct dmx_demux* demux, unsigned int num,
 			u64 *stc, unsigned int *base);

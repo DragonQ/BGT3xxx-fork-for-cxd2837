@@ -1248,7 +1248,7 @@ static void dvb_net_setup(struct net_device *dev)
 	dev->netdev_ops		= &dvb_netdev_ops;
 	dev->mtu		= 4096;
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 12, 0)
-	dev->max_mtu
+	dev->max_mtu		= 4096;
 #endif
 	dev->flags |= IFF_NOARP;
 }

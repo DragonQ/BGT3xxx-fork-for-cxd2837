@@ -29,6 +29,9 @@
 #include <linux/ioctl.h>
 #include <linux/wait.h>
 #include <asm/uaccess.h>
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 14, 0)
+#include <linux/dvb/dmx.h>
+#endif
 #include "dmxdev.h"
 
 static int debug;
@@ -327,9 +330,15 @@ static int dvb_dmxdev_set_buffer_size(struct dmxdev_filter *dmxdevfilter,
 	return 0;
 }
 
-static void dvb_dmxdev_filter_timeout(unsigned long data)
+#if LINUX_VERSION_CODE <= KERNEL_VERSION (4, 14, 0)
+	static void dvb_dmxdev_filter_timeout(unsigned long data)
 {
 	struct dmxdev_filter *dmxdevfilter = (struct dmxdev_filter *)data;
+#else
+	static void dvb_dmxdev_filter_timeout(struct timer_list *t)
+{
+	struct dmxdev_filter *dmxdevfilter = from_timer(dmxdevfilter, t, timer);
+#endif
 
 	dmxdevfilter->buffer.error = -ETIMEDOUT;
 	spin_lock_irq(&dmxdevfilter->dev->lock);
@@ -344,10 +353,15 @@ static void dvb_dmxdev_filter_timer(struct dmxdev_filter *dmxdevfilter)
 
 	del_timer(&dmxdevfilter->timer);
 	if (para->timeout) {
+	#if LINUX_VERSION_CODE <= KERNEL_VERSION(4, 14, 0)
 		dmxdevfilter->timer.function = dvb_dmxdev_filter_timeout;
 		dmxdevfilter->timer.data = (unsigned long)dmxdevfilter;
 		dmxdevfilter->timer.expires =
-		    jiffies + 1 + (HZ / 2 + HZ * para->timeout) / 1000;
+			jiffies + 1 + (HZ / 2 + HZ * para->timeout) / 1000;
+	#else
+		timer_setup(&dmxdevfilter->timer, dvb_dmxdev_filter_timeout, 0);
+		mod_timer(&dmxdevfilter->timer, jiffies + 1 + (HZ / 2 + HZ * para->timeout) / 1000);
+	#endif
 		add_timer(&dmxdevfilter->timer);
 	}
 }
@@ -566,7 +580,11 @@ static int dvb_dmxdev_start_feed(struct dmxdev *dmxdev,
 {
 	struct timespec timeout = { 0 };
 	struct dmx_pes_filter_params *para = &filter->params.pes;
-	dmx_output_t otype;
+	#if LINUX_VERSION_CODE <= KERNEL_VERSION(4,14,0)
+		dmx_output_t otype;
+	#else
+		enum dmx_output otype;
+	#endif
 	int ret;
 	int ts_type;
 	enum dmx_ts_pes ts_pes;
@@ -758,7 +776,11 @@ static int dvb_demux_open(struct inode *inode, struct file *file)
 	dvb_ringbuffer_init(&dmxdevfilter->buffer, NULL, 8192);
 	dmxdevfilter->type = DMXDEV_TYPE_NONE;
 	dvb_dmxdev_filter_state_set(dmxdevfilter, DMXDEV_STATE_ALLOCATED);
-	init_timer(&dmxdevfilter->timer);
+	#if LINUX_VERSION_CODE <= KERNEL_VERSION (4, 14, 0)
+		init_timer(&dmxdevfilter->timer);
+	#else
+		timer_setup(&dmxdevfilter->timer, NULL, 0);
+	#endif
 
 	dvbdev->users++;
 
@@ -791,7 +813,12 @@ static int dvb_dmxdev_filter_free(struct dmxdev *dmxdev,
 	return 0;
 }
 
-static inline void invert_mode(dmx_filter_t *filter)
+#if LINUX_VERSION_CODE <= KERNEL_VERSION(4,14,0)
+	static inline void invert_mode(dmx_filter_t *filter)
+#else
+	static inline void invert_mode(struct dmx_filter *filter)
+#endif
+
 {
 	int i;
 
