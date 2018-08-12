@@ -364,7 +364,7 @@ int saa7231_pci_init(struct saa7231_dev *saa7231)
 		saa7231->pdev->subsystem_device);
 
 	saa7231->caps = SAA7231_CAPS(revision);
-	strncpy(saa7231->name, SAA7231_TYPE(revision), 10);
+	strncpy(saa7231->name, SAA7231_TYPE(revision), sizeof(saa7231->name) - 1);
 
 	dprintk(SAA7231_ERROR, 0,
 		"irq: %d,\n    mmio(0): 0x%p mmio(2): 0x%p\n",
