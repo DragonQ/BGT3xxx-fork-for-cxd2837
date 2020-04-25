@@ -134,7 +134,7 @@ struct dvb_demux {
 
 	uint8_t *cnt_storage; /* for TS continuity check */
 
-	struct timespec speed_last_time; /* for TS speed check */
+	struct timespec64 speed_last_time; /* for TS speed check */
 	uint32_t speed_pkts_cnt; /* for TS speed check */
 };
 

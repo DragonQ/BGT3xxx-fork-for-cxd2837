@@ -302,14 +302,14 @@ static u32 ir_rc5_decode(unsigned int code)
 void ir_rc5_timer_end(unsigned long data)
 {
 	struct card_ir *ir = (struct card_ir *)data;
-	struct timeval tv;
+	struct timespec64 tv;
 	unsigned long current_jiffies, timeout;
 	u32 gap;
 	u32 rc5 = 0;
 
 	/* get time */
 	current_jiffies = jiffies;
-	do_gettimeofday(&tv);
+	ktime_get_real_ts64(&tv);
 
 	/* avoid overflow with gap >1s */
 	if (tv.tv_sec - ir->base_time.tv_sec > 1) {
