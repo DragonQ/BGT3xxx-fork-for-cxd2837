@@ -398,9 +398,9 @@ EXPORT_SYMBOL_GPL(v4l2_find_nearest_format);
 
 void v4l2_get_timestamp(struct timeval *tv)
 {
-	struct timespec ts;
+	struct timespec64 ts;
 
-	ktime_get_ts(&ts);
+	ktime_get_real_ts64(&ts);
 	tv->tv_sec = ts.tv_sec;
 	tv->tv_usec = ts.tv_nsec / NSEC_PER_USEC;
 }
