@@ -578,7 +578,7 @@ static int dvb_dmxdev_start_feed(struct dmxdev *dmxdev,
 				 struct dmxdev_filter *filter,
 				 struct dmxdev_feed *feed)
 {
-	struct timespec timeout = { 0 };
+	ktime_t timeout = ns_to_ktime(0);
 	struct dmx_pes_filter_params *para = &filter->params.pes;
 	#if LINUX_VERSION_CODE <= KERNEL_VERSION(4,14,0)
 		dmx_output_t otype;
