@@ -83,7 +83,7 @@ struct dvb_demux_feed {
 	u8 *buffer;
 	int buffer_size;
 
-	struct timespec timeout;
+	ktime_t timeout;
 	struct dvb_demux_filter *filter;
 
 	int ts_type;
