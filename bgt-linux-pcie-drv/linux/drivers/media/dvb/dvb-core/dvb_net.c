@@ -1236,7 +1236,9 @@ static const struct net_device_ops dvb_netdev_ops = {
 	.ndo_start_xmit		= dvb_net_tx,
 	.ndo_set_rx_mode	= dvb_net_set_multicast_list,
 	.ndo_set_mac_address    = dvb_net_set_mac,
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5,15,0)
 	.ndo_change_mtu		= eth_change_mtu,
+#endif
 	.ndo_validate_addr	= eth_validate_addr,
 };
 
