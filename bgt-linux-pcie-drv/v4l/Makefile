@@ -41,13 +41,13 @@ endif	# TOPDIR
 
 default:: config-compat.h Makefile.media links oss firmware
 	@echo Kernel build directory is $(OUTDIR)
-	$(MAKE) -C $(OUTDIR) SUBDIRS=$(PWD) $(MYCFLAGS) modules
+	$(MAKE) -C $(OUTDIR) M=$(shell pwd) $(MYCFLAGS) modules
 	./scripts/rmmod.pl check
 #	$(MAKE) checkpatch
 
 mismatch:: config-compat.h Makefile.media links oss firmware
 	@echo Kernel build directory is $(OUTDIR)
-	$(MAKE) -Wfatal-errors -C $(OUTDIR) SUBDIRS=$(PWD) $(MYCFLAGS) CONFIG_DEBUG_SECTION_MISMATCH=y modules
+	$(MAKE) -Wfatal-errors -C $(OUTDIR) M=$(shell pwd) $(MYCFLAGS) CONFIG_DEBUG_SECTION_MISMATCH=y modules
 	./scripts/rmmod.pl check
 
 firmware::

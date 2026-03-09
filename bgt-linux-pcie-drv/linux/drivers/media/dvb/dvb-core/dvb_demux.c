@@ -404,26 +404,25 @@ static void dvb_dmx_swfilter_packet(struct dvb_demux *demux, const u8 *buf)
 	int dvr_done = 0;
 
 	if (dvb_demux_speedcheck) {
-		struct timespec cur_time, delta_time;
+		struct timespec64 cur_time, delta_time;
 		u64 speed_bytes, speed_timedelta;
 
 		demux->speed_pkts_cnt++;
 
 		/* show speed every SPEED_PKTS_INTERVAL packets */
 		if (!(demux->speed_pkts_cnt % SPEED_PKTS_INTERVAL)) {
-			cur_time = current_kernel_time();
+			ktime_get_real_ts64(&cur_time);
 
 			if (demux->speed_last_time.tv_sec != 0 &&
 					demux->speed_last_time.tv_nsec != 0) {
-				delta_time = timespec_sub(cur_time,
+				delta_time = timespec64_sub(cur_time,
 						demux->speed_last_time);
 				speed_bytes = (u64)demux->speed_pkts_cnt
 					* 188 * 8;
 				/* convert to 1024 basis */
 				speed_bytes = 1000 * div64_u64(speed_bytes,
 						1024);
-				speed_timedelta =
-					(u64)timespec_to_ns(&delta_time);
+				speed_timedelta = timespec64_to_ns(&delta_time);
 				speed_timedelta = div64_u64(speed_timedelta,
 						1000000); /* nsec -> usec */
 				printk(KERN_INFO "TS speed %llu Kbits/sec \n",
