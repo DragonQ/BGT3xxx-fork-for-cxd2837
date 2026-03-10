@@ -280,13 +280,22 @@ int saa7231_pci_init(struct saa7231_dev *saa7231)
 		goto fail0;
 	}
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 18, 0)
+	if (!dma_set_mask(&pdev->dev, DMA_BIT_MASK(64))) {
+		err = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(64));
+#else
 	if (!pci_set_dma_mask(pdev, DMA_BIT_MASK(64))) {
 		err = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64));
+#endif
 		if (err) {
 			dprintk(SAA7231_ERROR, 1, "Unable to obtain 64bit DMA");
 			goto fail1;
 		}
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 18, 0)
+	} else if ((err = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32))) != 0) {
+#else
 	} else if ((err = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(32))) != 0) {
+#endif
 		dprintk(SAA7231_ERROR, 1, "Unable to obtain 32bit DMA");
 		goto fail1;
 	}

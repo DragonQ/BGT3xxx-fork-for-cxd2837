@@ -439,7 +439,11 @@ out:
 	return err;
 }
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 2, 0)
+static int dvb_uevent(const struct device *dev, struct kobj_uevent_env *env)
+#else
 static int dvb_uevent(struct device *dev, struct kobj_uevent_env *env)
+#endif
 {
 	struct dvb_device *dvbdev = dev_get_drvdata(dev);
 
@@ -449,7 +453,11 @@ static int dvb_uevent(struct device *dev, struct kobj_uevent_env *env)
 	return 0;
 }
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 2, 0)
+static char *dvb_devnode(const struct device *dev, umode_t *mode)
+#else
 static char *dvb_devnode(struct device *dev, umode_t *mode)
+#endif
 {
 	struct dvb_device *dvbdev = dev_get_drvdata(dev);
 
@@ -474,7 +482,11 @@ static int __init init_dvbdev(void)
 		goto error;
 	}
 
+#if ( LINUX_VERSION_CODE >= KERNEL_VERSION( 6, 4, 0 ) )
+	dvb_class = class_create("dvb");
+#else
 	dvb_class = class_create(THIS_MODULE, "dvb");
+#endif
 	if (IS_ERR(dvb_class)) {
 		retval = PTR_ERR(dvb_class);
 		goto error;

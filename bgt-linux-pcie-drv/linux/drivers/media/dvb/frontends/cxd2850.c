@@ -28,7 +28,11 @@
 #include "compat.h"
 #include <linux/dvb/frontend.h>
 #include "dvb_frontend.h"
-#include "dvb_math.h"
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 6, 0)
+	#include <linux/int_log.h>
+#else
+	#include "dvb_math.h"
+#endif
 
 #include "cxd2850.h"
 

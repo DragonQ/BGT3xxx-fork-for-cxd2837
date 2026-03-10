@@ -119,7 +119,11 @@ int v4l2_video_std_construct(struct v4l2_standard *vs,
 	vs->id = id;
 	v4l2_video_std_frame_period(id, &vs->frameperiod);
 	vs->framelines = (id & V4L2_STD_525_60) ? 525 : 625;
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 3, 0)
+	strscpy(vs->name, name, sizeof(vs->name));
+#else
 	strlcpy(vs->name, name, sizeof(vs->name));
+#endif
 	return 0;
 }
 EXPORT_SYMBOL(v4l2_video_std_construct);
@@ -2017,7 +2021,11 @@ static int v4l_dbg_g_chip_info(const struct v4l2_ioctl_ops *ops,
 			p->flags |= V4L2_CHIP_FL_WRITABLE;
 		if (ops->vidioc_g_register)
 			p->flags |= V4L2_CHIP_FL_READABLE;
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 3, 0)
+		strscpy(p->name, vfd->v4l2_dev->name, sizeof(p->name));
+#else
 		strlcpy(p->name, vfd->v4l2_dev->name, sizeof(p->name));
+#endif
 		if (ops->vidioc_g_chip_info)
 			return ops->vidioc_g_chip_info(file, fh, arg);
 		if (p->match.addr)
@@ -2034,7 +2042,11 @@ static int v4l_dbg_g_chip_info(const struct v4l2_ioctl_ops *ops,
 				p->flags |= V4L2_CHIP_FL_WRITABLE;
 			if (sd->ops->core && sd->ops->core->g_register)
 				p->flags |= V4L2_CHIP_FL_READABLE;
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 3, 0)
+			strscpy(p->name, sd->name, sizeof(p->name));
+#else
 			strlcpy(p->name, sd->name, sizeof(p->name));
+#endif
 			return 0;
 		}
 		break;

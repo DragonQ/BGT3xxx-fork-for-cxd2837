@@ -110,8 +110,13 @@ static int vidioc_querycap(struct file *file, void  *priv,
 	struct snd_tea575x *tea = video_drvdata(file);
 
 	strcpy(v->card, tea->tea5759 ? "TEA5759" : "TEA5757");
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 3, 0)
+	strscpy(v->driver, "tea575x-tuner", sizeof(v->driver));
+	strscpy(v->card, "Maestro Radio", sizeof(v->card));
+#else
 	strlcpy(v->driver, "tea575x-tuner", sizeof(v->driver));
 	strlcpy(v->card, "Maestro Radio", sizeof(v->card));
+#endif
 	sprintf(v->bus_info, "PCI");
 	v->version = RADIO_VERSION;
 	v->capabilities = V4L2_CAP_TUNER;

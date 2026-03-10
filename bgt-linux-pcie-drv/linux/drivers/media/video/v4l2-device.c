@@ -236,7 +236,11 @@ int v4l2_device_register_subdev_nodes(struct v4l2_device *v4l2_dev)
 		}
 
 		video_set_drvdata(vdev, sd);
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 3, 0)
+		strscpy(vdev->name, sd->name, sizeof(vdev->name));
+#else
 		strlcpy(vdev->name, sd->name, sizeof(vdev->name));
+#endif
 		vdev->v4l2_dev = v4l2_dev;
 		vdev->fops = &v4l2_subdev_fops;
 		vdev->release = v4l2_device_release_subdev_node;

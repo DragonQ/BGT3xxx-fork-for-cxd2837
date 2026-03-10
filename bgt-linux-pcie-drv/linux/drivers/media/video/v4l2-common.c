@@ -100,7 +100,11 @@ int v4l2_ctrl_query_fill(struct v4l2_queryctrl *qctrl, s32 _min, s32 _max, s32 _
 	qctrl->step = step;
 	qctrl->default_value = def;
 	qctrl->reserved[0] = qctrl->reserved[1] = 0;
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 3, 0)
+	strscpy(qctrl->name, name, sizeof(qctrl->name));
+#else
 	strlcpy(qctrl->name, name, sizeof(qctrl->name));
+#endif
 	return 0;
 }
 EXPORT_SYMBOL(v4l2_ctrl_query_fill);
@@ -186,7 +190,11 @@ struct v4l2_subdev *v4l2_i2c_new_subdev(struct v4l2_device *v4l2_dev,
 	/* Setup the i2c board info with the device type and
 	   the device address. */
 	memset(&info, 0, sizeof(info));
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 3, 0)
+	strscpy(info.type, client_type, sizeof(info.type));
+#else
 	strlcpy(info.type, client_type, sizeof(info.type));
+#endif
 	info.addr = addr;
 
 	return v4l2_i2c_new_subdev_board(v4l2_dev, adapter, &info, probe_addrs);
@@ -255,7 +263,11 @@ void v4l2_spi_subdev_init(struct v4l2_subdev *sd, struct spi_device *spi,
 	v4l2_set_subdevdata(sd, spi);
 	spi_set_drvdata(spi, sd);
 	/* initialize name */
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 3, 0)
+	strscpy(sd->name, spi->dev.driver->name, sizeof(sd->name));
+#else
 	strlcpy(sd->name, spi->dev.driver->name, sizeof(sd->name));
+#endif
 }
 EXPORT_SYMBOL_GPL(v4l2_spi_subdev_init);
 

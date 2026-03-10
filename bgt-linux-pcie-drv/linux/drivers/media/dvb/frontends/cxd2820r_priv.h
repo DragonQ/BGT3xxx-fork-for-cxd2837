@@ -24,9 +24,16 @@
 
 #include <linux/dvb/version.h>
 #include "dvb_frontend.h"
-#include "dvb_math.h"
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 6, 0)
+	#include <linux/int_log.h>
+#else
+	#include "dvb_math.h"
+#endif
 #include "cxd2820r.h"
 #include <linux/gpio.h>
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 13, 0)
+	#include <linux/gpio/driver.h>
+#endif
 
 struct reg_val_mask {
 	u32 reg;

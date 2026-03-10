@@ -1,5 +1,6 @@
 # BGT3xxx Linux Drivers
 
+Builds for kernels up to v6.8.
 Tested for kernels up to v5.15.
 
 ## Installation Instructions

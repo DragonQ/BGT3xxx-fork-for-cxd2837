@@ -1137,9 +1137,13 @@ struct dvb_frontend *simple_tuner_attach(struct dvb_frontend *fe,
 				   "set to input %d (insmod option)\n",
 				   priv->nr, dtv_input[priv->nr]);
 	}
-
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 3, 0)
+	strscpy(fe->ops.tuner_ops.info.name, priv->tun->name,
+		sizeof(fe->ops.tuner_ops.info.name));
+#else
 	strlcpy(fe->ops.tuner_ops.info.name, priv->tun->name,
 		sizeof(fe->ops.tuner_ops.info.name));
+#endif
 
 	return fe;
 }
