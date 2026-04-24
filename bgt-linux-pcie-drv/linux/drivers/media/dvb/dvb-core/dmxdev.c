@@ -46,7 +46,7 @@ MODULE_PARM_DESC(debug, "Turn on/off debugging (default:off).");
 #define from_timer timer_container_of
 #endif
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 1, 91)
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 1, 91) && (LINUX_VERSION_CODE < KERNEL_VERSION(5, 15, 0) || LINUX_VERSION_CODE >= KERNEL_VERSION(5, 16, 0))
 #include <linux/timer.h>
 static inline int timer_delete(struct timer_list *timer)
 {
