@@ -29,6 +29,7 @@
 #include <linux/poll.h>
 #include <linux/string.h>
 #include <linux/crc32.h>
+#include <linux/version.h>
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 13, 0)
 #include <linux/sched/signal.h>

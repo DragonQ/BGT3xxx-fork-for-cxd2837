@@ -1529,6 +1529,7 @@ static struct dvb_tuner_ops tda18272_ops = {
 #define TDA18272_MAJOR_REV	1
 #define TDA18272_MINOR_REV	1
 
+#if defined(CONFIG_DVB_TDA18272) || (defined(CONFIG_DVB_TDA18272_MODULE) && defined(MODULE))
 struct dvb_frontend *tda18272_attach(struct dvb_frontend *fe,
 				     struct i2c_adapter *i2c,
 				     const struct tda18272_config *config)
@@ -1598,6 +1599,7 @@ err1:
 	return NULL;
 }
 EXPORT_SYMBOL(tda18272_attach);
+#endif
 
 MODULE_AUTHOR("Manu Abraham");
 MODULE_DESCRIPTION("TDA18272 Silicon tuner");

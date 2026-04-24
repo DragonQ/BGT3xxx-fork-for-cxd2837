@@ -28,6 +28,7 @@
 #include <linux/poll.h>
 #include <linux/ioctl.h>
 #include <linux/wait.h>
+#include <linux/version.h>
 #include <asm/uaccess.h>
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 14, 0)
 #include <linux/dvb/dmx.h>
@@ -40,6 +41,18 @@ module_param(debug, int, 0644);
 MODULE_PARM_DESC(debug, "Turn on/off debugging (default:off).");
 
 #define dprintk	if (debug) printk
+
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 16, 0)
+#define from_timer timer_container_of
+#endif
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 1, 91)
+#include <linux/timer.h>
+static inline int timer_delete(struct timer_list *timer)
+{
+	return del_timer(timer);
+}
+#endif
 
 static int dvb_dmxdev_buffer_write(struct dvb_ringbuffer *buf,
 				   const u8 *src, size_t len)
@@ -351,7 +364,7 @@ static void dvb_dmxdev_filter_timer(struct dmxdev_filter *dmxdevfilter)
 {
 	struct dmx_sct_filter_params *para = &dmxdevfilter->params.sec;
 
-	del_timer(&dmxdevfilter->timer);
+	timer_delete(&dmxdevfilter->timer);
 	if (para->timeout) {
 	#if LINUX_VERSION_CODE <= KERNEL_VERSION(4, 14, 0)
 		dmxdevfilter->timer.function = dvb_dmxdev_filter_timeout;
@@ -383,7 +396,7 @@ static int dvb_dmxdev_section_callback(const u8 *buffer1, size_t buffer1_len,
 		spin_unlock(&dmxdevfilter->dev->lock);
 		return 0;
 	}
-	del_timer(&dmxdevfilter->timer);
+	timer_delete(&dmxdevfilter->timer);
 	dprintk("dmxdev: section callback %*ph\n", 6, buffer1);
 	ret = dvb_dmxdev_buffer_write(&dmxdevfilter->buffer, buffer1,
 				      buffer1_len);
@@ -448,7 +461,7 @@ static int dvb_dmxdev_feed_stop(struct dmxdev_filter *dmxdevfilter)
 
 	switch (dmxdevfilter->type) {
 	case DMXDEV_TYPE_SEC:
-		del_timer(&dmxdevfilter->timer);
+		timer_delete(&dmxdevfilter->timer);
 		dmxdevfilter->feed.sec->stop_filtering(dmxdevfilter->feed.sec);
 		break;
 	case DMXDEV_TYPE_PES:

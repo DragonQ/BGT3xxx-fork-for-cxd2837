@@ -31,6 +31,7 @@
 #include <linux/list.h>
 #include <linux/time.h>
 #include <linux/dvb/dmx.h>
+#include <linux/version.h>
 
 /*--------------------------------------------------------------------------*/
 /* Common definitions */

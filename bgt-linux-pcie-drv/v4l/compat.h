@@ -14,6 +14,8 @@
 #define INIT_DELAYED_WORK(a,b,c)	INIT_WORK(a,b,c)
 #endif
 
+#include <linux/version.h>
+
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 24)
 #define	KERN_CONT	""
 #endif

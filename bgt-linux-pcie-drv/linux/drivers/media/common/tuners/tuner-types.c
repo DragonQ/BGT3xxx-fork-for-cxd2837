@@ -8,6 +8,7 @@
 #include <linux/module.h>
 #include <media/tuner.h>
 #include <media/tuner-types.h>
+#include <linux/version.h>
 
 /* ---------------------------------------------------------------------- */
 
@@ -1434,8 +1435,11 @@ static struct tuner_params tuner_sony_btf_pg463z_params[] = {
 };
 
 /* --------------------------------------------------------------------- */
-
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 15, 0)
+const struct tunertype tuners[] = {
+#else
 struct tunertype tuners[] = {
+#endif
 	/* 0-9 */
 	[TUNER_TEMIC_PAL] = { /* TEMIC PAL */
 		.name   = "Temic PAL (4002 FH5)",

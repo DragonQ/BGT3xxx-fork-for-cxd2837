@@ -1329,7 +1329,7 @@ static struct dvb_frontend_ops cxd2817_ops = {
 
 #define CXD2817_ID		0x70
 
-
+#if defined(CONFIG_DVB_CXD2817) || (defined(CONFIG_DVB_CXD2817_MODULE) && defined(MODULE))
 struct dvb_frontend *cxd2817_attach(const struct cxd2817_config *config,
 				    struct i2c_adapter *i2c)
 {
@@ -1361,6 +1361,8 @@ error:
 	return NULL;
 }
 EXPORT_SYMBOL(cxd2817_attach);
+#endif
+
 MODULE_PARM_DESC(verbose, "Set Verbosity level");
 MODULE_AUTHOR("Manu Abraham");
 MODULE_DESCRIPTION("CXD2817 Multi-Std Broadcast frontend");

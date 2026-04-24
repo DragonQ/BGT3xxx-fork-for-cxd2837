@@ -2701,6 +2701,7 @@ static int probe(struct cxd_state *state)
 	return 0;
 }
 
+#if defined(CONFIG_DVB_CXD2843) || (defined(CONFIG_DVB_CXD2843_MODULE) && defined(MODULE))
 struct dvb_frontend *cxd2843_attach(struct i2c_adapter *i2c,
 				    struct cxd2843_cfg *cfg)
 {
@@ -2723,6 +2724,7 @@ struct dvb_frontend *cxd2843_attach(struct i2c_adapter *i2c,
 	return NULL;
 }
 EXPORT_SYMBOL(cxd2843_attach);
+#endif
 
 MODULE_DESCRIPTION("CXD2843/37/38 driver");
 MODULE_AUTHOR("Ralph Metzler, Manfred Voelkel");

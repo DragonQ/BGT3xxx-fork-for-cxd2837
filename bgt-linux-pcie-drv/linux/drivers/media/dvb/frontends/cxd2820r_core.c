@@ -24,6 +24,14 @@
 /* Max transfer size done by I2C transfer functions */
 #define MAX_XFER_SIZE  64
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 11, 0)
+#include <linux/gpio/driver.h>
+static inline int gpiochip_add(struct gpio_chip *gc)
+{
+	return gpiochip_add_data(gc, NULL);
+}
+#endif
+
 /* write multiple registers */
 static int cxd2820r_wr_regs_i2c(struct cxd2820r_priv *priv, u8 i2c, u8 reg,
 	u8 *val, int len)
@@ -632,7 +640,11 @@ static int cxd2820r_gpio_direction_output(struct gpio_chip *chip, unsigned nr,
 	return cxd2820r_gpio(&priv->fe, gpio);
 }
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6,17,0)
+static int cxd2820r_gpio_set(struct gpio_chip *chip, unsigned nr, int val)
+#else
 static void cxd2820r_gpio_set(struct gpio_chip *chip, unsigned nr, int val)
+#endif
 {
 	struct cxd2820r_priv *priv =
 			container_of(chip, struct cxd2820r_priv, gpio_chip);
@@ -645,7 +657,11 @@ static void cxd2820r_gpio_set(struct gpio_chip *chip, unsigned nr, int val)
 
 	(void) cxd2820r_gpio(&priv->fe, gpio);
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6,17,0)
+	return 0;
+#else
 	return;
+#endif
 }
 
 static int cxd2820r_gpio_get(struct gpio_chip *chip, unsigned nr)

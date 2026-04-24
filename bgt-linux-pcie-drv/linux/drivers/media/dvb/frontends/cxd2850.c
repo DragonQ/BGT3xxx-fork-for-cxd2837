@@ -1792,6 +1792,7 @@ static struct dvb_frontend_ops cxd2850_ops = {
 };
 
 
+#if defined(CONFIG_DVB_CXD2850) || (defined(CONFIG_DVB_CXD2850_MODULE) && defined(MODULE))
 struct dvb_frontend *cxd2850_attach(const struct cxd2850_config *config,
 				    struct i2c_adapter *i2c)
 {
@@ -1823,6 +1824,8 @@ error:
 	return NULL;
 }
 EXPORT_SYMBOL(cxd2850_attach);
+#endif
+
 MODULE_PARM_DESC(verbose, "Set Verbosity level");
 MODULE_AUTHOR("Manu Abraham");
 MODULE_DESCRIPTION("CXD2850 Multi-Std Broadcast frontend");

@@ -240,6 +240,7 @@ static void a8290_release(struct dvb_frontend *fe)
 	fe->sec_priv = NULL;
 }
 
+#if defined(CONFIG_DVB_A8290) || (defined(CONFIG_DVB_A8290_MODULE) && defined(MODULE))
 struct dvb_frontend *a8290_attach(struct dvb_frontend *fe,
 				  const struct a8290_config *config,
 				  struct i2c_adapter *i2c)
@@ -272,6 +273,8 @@ error:
 	return NULL;
 }
 EXPORT_SYMBOL(a8290_attach);
+#endif
+
 MODULE_PARM_DESC(verbose, "Set Verbosity level");
 MODULE_AUTHOR("Manu Abraham");
 MODULE_DESCRIPTION("A8290 LNB controller");

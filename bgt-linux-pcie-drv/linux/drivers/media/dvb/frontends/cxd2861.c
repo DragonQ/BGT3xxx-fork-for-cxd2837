@@ -876,6 +876,7 @@ static struct dvb_tuner_ops cxd2861_ops = {
 	.release		= cxd2861_release
 };
 
+#if defined(CONFIG_DVB_CXD2861) || (defined(CONFIG_DVB_CXD2861_MODULE) && defined(MODULE))
 struct dvb_frontend *cxd2861_attach(struct dvb_frontend *fe,
 				    const struct cxd2861_cfg *config,
 				    struct i2c_adapter *i2c)
@@ -908,6 +909,7 @@ error:
 	return NULL;
 }
 EXPORT_SYMBOL(cxd2861_attach);
+#endif
 MODULE_PARM_DESC(verbose, "Set Verbosity level");
 MODULE_AUTHOR("Manu Abraham");
 MODULE_DESCRIPTION("CXD2861 Multi-Std Broadcast frontend");
