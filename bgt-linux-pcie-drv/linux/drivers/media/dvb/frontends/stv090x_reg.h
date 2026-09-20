@@ -1,22 +1,10 @@
+/* SPDX-License-Identifier: GPL-2.0-or-later */
 /*
 	STV0900/0903 Multistandard Broadcast Frontend driver
 	Copyright (C) Manu Abraham <abraham.manu@gmail.com>
 
 	Copyright (C) ST Microelectronics
 
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; either version 2 of the License, or
-	(at your option) any later version.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
 #ifndef __STV090x_REG_H
@@ -2000,7 +1988,6 @@
 #define STV090x_OFFST_Px_PKTCRC_KOCNT_FIELD	0
 #define STV090x_WIDTH_Px_PKTCRC_KOCNT_FIELD	8
 
-
 #define STV090x_NBITER_NFx(__x)				(0xFA03 + (__x - 4) * 0x1)
 #define STV090x_NBITER_NF4				STV090x_NBITER_NFx(4)
 #define STV090x_NBITER_NF5				STV090x_NBITER_NFx(5)
@@ -2155,14 +2142,6 @@
 #define STV090x_WIDTH_Px_TSDEL_SYNCBYTE_FIELD		1
 #define STV090x_OFFST_Px_TSDEL_XXHEADER_FIELD		6
 #define STV090x_WIDTH_Px_TSDEL_XXHEADER_FIELD		1
-
-#define STV090x_Px_TSDIVN(__x)				(0xf579 - (__x - 1) * 0x200)
-#define STV090x_P1_TSDIVN				STV090x_Px_TSDIVN(1)
-#define STV090x_P2_TSDIVN				STV090x_Px_TSDIVN(2)
-
-#define STV090x_Px_TSCFG4(__x)				(0xf57a - (__x - 1) * 0x200)
-#define STV090x_P1_TSCFG4				STV090x_Px_TSCFG4(1)
-#define STV090x_P2_TSCFG4				STV090x_Px_TSCFG4(2)
 
 #define STV090x_Px_TSSPEED(__x)				(0xF580 - (__x - 1) * 0x200)
 #define STV090x_P1_TSSPEED				STV090x_Px_TSSPEED(1)
