@@ -13,6 +13,7 @@
 #include <linux/string.h>
 #include <linux/slab.h>
 #include <linux/mutex.h>
+#include <linux/version.h>
 
 #include <linux/dvb/frontend.h>
 #include <media/dvb_frontend.h>
@@ -25,6 +26,10 @@
 
 /* Max transfer size done by I2C transfer functions */
 #define MAX_XFER_SIZE  64
+#if LINUX_VERSION_CODE < KERNEL_VERSION(7, 0, 0)
+#define kmalloc_obj(type) kmalloc(sizeof(type), GFP_KERNEL)
+#define kzalloc_obj(type) kzalloc(sizeof(type), GFP_KERNEL)
+#endif
 
 static unsigned int verbose;
 module_param(verbose, int, 0644);
@@ -4995,7 +5000,11 @@ static struct dvb_frontend *stv090x_get_dvb_frontend(struct i2c_client *client)
 	return &state->frontend;
 }
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 3, 0)
+static int stv090x_probe(struct i2c_client *client, const struct i2c_device_id *id)
+#else
 static int stv090x_probe(struct i2c_client *client)
+#endif
 {
 	int ret = 0;
 	struct stv090x_config *config = client->dev.platform_data;
@@ -5036,11 +5045,18 @@ error:
 	return ret;
 }
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 1, 0)
+static int stv090x_remove(struct i2c_client *client)
+#else
 static void stv090x_remove(struct i2c_client *client)
+#endif
 {
 	struct stv090x_state *state = i2c_get_clientdata(client);
 
 	stv090x_release(&state->frontend);
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 1, 0)
+	return 0;
+#endif
 }
 
 struct dvb_frontend *stv090x_attach(struct stv090x_config *config,

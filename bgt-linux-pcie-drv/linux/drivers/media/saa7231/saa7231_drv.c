@@ -333,8 +333,6 @@ static struct stv090x_config bgt3575_stv090x_config = {
 	.xtal			= 8000000,
 	.address		= 0xd0 >> 1,
 
-	.ts3_clk                = 81000000,
-	.ts3_mode		= STV090x_TSMODE_SERIAL_CONTINUOUS,
 	.repeater_level		= STV090x_RPTLEVEL_16,
 };
 
@@ -356,8 +354,6 @@ static struct stv090x_config bgt3576_stv090x_config = {
 	.xtal			= 8000000,
 	.address		= 0xd0 >> 1,
 
-	.ts3_clk                = 81000000,
-	.ts3_mode		= STV090x_TSMODE_SERIAL_CONTINUOUS,
 	.repeater_level		= STV090x_RPTLEVEL_16,
 };
 
