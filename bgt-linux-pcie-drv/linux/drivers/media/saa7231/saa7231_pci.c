@@ -177,7 +177,7 @@ static int saa7231_request_irq(struct saa7231_dev *saa7231)
 	}
 
 	if (saa7231->int_type == MODE_MSI_X) {
-		for (i = 0; saa7231->msi_vectors_max; i++) {
+		for (i = 0; i < saa7231->msi_vectors_max; i++) {
 			ret = request_irq(saa7231->msix_entries[i].vector,
 					  saa7231_msix_handler[i].handler,
 					  IRQF_SHARED,
