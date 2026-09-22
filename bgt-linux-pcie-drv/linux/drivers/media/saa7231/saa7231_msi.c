@@ -204,6 +204,15 @@ int saa7231_add_msivector(struct saa7231_dev *saa7231,
 }
 EXPORT_SYMBOL_GPL(saa7231_add_msivector);
 
+void saa7231_irq_tasklet(unsigned long data)
+{
+	struct saa7231_irq_entry *event = (struct saa7231_irq_entry *) data;
+
+	if (event->handler)
+		event->handler(event->saa7231, event->vector);
+}
+EXPORT_SYMBOL_GPL(saa7231_irq_tasklet);
+
 int saa7231_add_irqevent(struct saa7231_dev *saa7231,
 			 int vector,
 			 enum saa7231_edge edge,
@@ -219,6 +228,8 @@ int saa7231_add_irqevent(struct saa7231_dev *saa7231,
 	strcpy(event->desc, desc);
 	event->handler = handler;
 	event->vector = vector;
+	event->saa7231 = saa7231;
+	tasklet_init(&event->tasklet, saa7231_irq_tasklet, (unsigned long) event);
 	saa7231->handlers++;
 	dprintk(SAA7231_DEBUG, 1, "Succesfully added %s as Event handler:%d", event->desc, vector);
 	return 0;
@@ -235,6 +246,7 @@ int saa7231_remove_irqevent(struct saa7231_dev *saa7231, int vector)
 		event->desc);
 
 	if (event->handler) {
+		tasklet_kill(&event->tasklet);
 		event->vector = 0;
 		event->handler = NULL;
 		saa7231->handlers--;

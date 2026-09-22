@@ -41,6 +41,8 @@ struct saa7231_irq_entry {
 	enum saa7231_edge	polarity;
 	char			desc[32];
 	int (*handler)		(struct saa7231_dev *saa7231, int vector);
+	struct saa7231_dev	*saa7231;
+	struct tasklet_struct	tasklet;
 };
 
 struct saa7231_msix_entry {
@@ -59,6 +61,8 @@ struct saa7231_stat {
 
 extern int saa7231_msi_init(struct saa7231_dev *saa7231);
 extern void saa7231_msi_exit(struct saa7231_dev *saa7231);
+
+extern void saa7231_irq_tasklet(unsigned long data);
 
 extern int saa7231_add_irqevent(struct saa7231_dev *saa7231,
 				int vector,

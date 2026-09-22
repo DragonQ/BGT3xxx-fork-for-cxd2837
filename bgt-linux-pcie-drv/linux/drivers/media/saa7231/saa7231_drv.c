@@ -164,16 +164,14 @@ static irqreturn_t saa7231_irq_handler(int irq, void *dev_id)
 		return IRQ_NONE;
 
 	for (i = 0; i < SAA7231_MSI_LOOPS; i++) {
-
 		for (j = 0; j < 32; j++) {
 			irq = status[i] >> j;
 			if (irq & 0x1) {
 				vector = (i * 32) + j;
 				event = &saa7231->event_handler[vector];
 
-				SAA7231_WR(status[i], SAA7231_BAR0, MSI, MSI_INT_STATUS_CLR(i));
+				SAA7231_WR((1U << j), SAA7231_BAR0, MSI, MSI_INT_STATUS_CLR(i));
 				if (status[1] & 0x100000) {
-
 					dcs_stat = SAA7231_RD(SAA7231_BAR0, DCSN, DCSN_INT_STATUS);
 					dcs_addr = SAA7231_RD(SAA7231_BAR0, DCSN, DCSN_ADDR);
 					dprintk(SAA7231_DEBUG, 1, "Clearing access violation (0x%x) @0x%x...", dcs_stat, dcs_addr);
@@ -183,7 +181,7 @@ static irqreturn_t saa7231_irq_handler(int irq, void *dev_id)
 				}
 
 				if (event->vector == vector)
-					event->handler(saa7231, vector);
+					tasklet_schedule(&event->tasklet);
 			}
 		}
 	}
